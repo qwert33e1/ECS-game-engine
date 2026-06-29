@@ -1,0 +1,49 @@
+# ====================================================================
+# Visual Studio átmeneti fájlok és mappák
+# ====================================================================
+.vscode/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+out/
+build/
+GeneratedFiles/
+
+# Fordítási melléktermékek
+*.obj
+*.ilk
+*.pdb
+*.tlog
+*.lastbuildstate
+*.idb
+*.gch
+*.pch
+*.ipch
+
+# Felhasználóspecifikus beállítások (ezek gépenként változnak)
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# SQL Server Compact / SQLite cache (VS kódkiegészítéshez kell neki)
+*.sdf
+*.opensdf
+*.db
+*.ipch/
+
+# ====================================================================
+# Külső könyvtárak (Libraries) kezelése
+# ====================================================================
+# Alapesetben tiltjuk a lefordított binárisokat (.lib, .dll, .a, .so)
+*.exe
+*.dll
+*.lib
+*.a
+*.so
+
+# HA a root/libraries mappádban lévő .lib/.dll fájlokat MÉGIS fel akarod tölteni, 
+# mert a projekt részét képezik, akkor töröld ki a lenti két sor elejéről a '#' jelet:
+#!libraries/**/*.lib
+#!libraries/**/*.dll
