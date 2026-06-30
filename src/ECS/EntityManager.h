@@ -1,17 +1,12 @@
-#include <queue>
-#include <cstdint>
-#include <unordered_map>
-#include <bitset>
-#include <memory>
-#include <utility>
+#pragma once
+
+#include "common.h"
 #include "Archetype.h"
 #include "ComponentRegistry.h"
 
-#define MAX_ENTITIES 5000
-#define MAX_COMPONENTS 32
-
 class EntityManager
 {
+private:
     std::queue<uint32_t> idPool;
     std::unordered_map<std::bitset<MAX_COMPONENTS>, std::unique_ptr<Archetype>> archMap;
 
@@ -32,7 +27,7 @@ public:
     }
 
     template <typename... Ts>
-    uint32_t CreateEntity(Ts... components)
+    uint32_t CreateEntity(Ts &&...components)
     {
         std::bitset<MAX_COMPONENTS> signature;
 
@@ -45,6 +40,8 @@ public:
 
         uint32_t newEntityId = getNextId();
 
-        Archetype[signature].AddEntity(newEntityId, );
+        Archetype[signature].AddEntity(newEntityId, std::forward<Ts>(components)...);
+
+        return newEntityId;
     }
 };
