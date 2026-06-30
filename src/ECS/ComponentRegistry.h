@@ -9,12 +9,12 @@ namespace ComponentRegistry
     template <typename T>
     uint32_t GetId()
     {
-        static uint32_t id = SetSize<T>();
+        static uint32_t id = RegisterAndGetId<T>();
         return id;
     }
 
     template <typename T>
-    uint32_t SetSize()
+    uint32_t RegisterAndGetId()
     {
         globalSizeTable[count] = sizeof(T);
         return count++;
