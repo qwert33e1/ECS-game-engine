@@ -8,6 +8,7 @@ class EntityManager
 {
 private:
     std::queue<uint32_t> idPool;
+    std::vector<std::unique_ptr<Chunk>> chunkPool;
     std::unordered_map<std::bitset<MAX_COMPONENTS>, std::unique_ptr<Archetype>> archMap;
 
     uint32_t getNextId()
@@ -35,7 +36,7 @@ public:
 
         if (!archMap.contains(signature))
         {
-            archMap[signature] = std::unique_ptr<Archetype>(new Archetype(signature));
+            archMap[signature] = std::unique_ptr<Archetype>(new Archetype(signature, chunkPool);
         }
 
         uint32_t newEntityId = getNextId();

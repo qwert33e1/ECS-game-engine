@@ -20,12 +20,13 @@ class Archetype
 {
 private:
     std::bitset<MAX_COMPONENTS> signature;
-    std::vector<uint8_t> componentArray;
+    std::vector<std::unique_ptr<Chunk>> componentChunks;
+    std::vector<std::unique_ptr<Chunk>> chunkPool;
     uint32_t maxEntityInChunk;
     uint32_t offsetMap[MAX_COMPONENTS];
 
 public:
-    Archetype(std::bitset<MAX_COMPONENTS> _signature)
+    Archetype(std::bitset<MAX_COMPONENTS> _signature, std::vector<std::unique_ptr<Chunk>>)
     {
         signature = _signature;
 
@@ -53,5 +54,47 @@ public:
                 currentOffset += maxEntityInChunk * ComponentRegistry::globalSizeTable[i];
             }
         }
+    }
+
+    template <typename... Ts>
+    void AddEntity(uint32_t entityId, Ts &&...components)
+    {
+        Chunk *currentChunk = GetCurrentChunk();
+        (PlaceData<Ts>(components, currentChunk), ...);
+
+        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(currentChunk->data);
+        indexEntityMap[currentChunk->entityCounter] = entityId;
+
+        currentChunk->entityCounter++;
+    }
+
+    template <typename T>
+    void PlaceData(T data, Chunk *chunk)
+    {
+        uint32_t offset = offsetMap[ComponentRegistry::GetId<T>()];
+        T *dest = reinterpret_cast<T *>(chunk->data + offset);
+        dest[chunk->entityCounter] = data;
+    }
+
+    Chunk *GetCurrentChunk()
+    {
+        if (!componentChunks.empty())
+        {
+            Chunk *back = componentChunks.back().get();
+            if (back->entityCounter < maxEntityInChunk)
+            {
+                return back;
+            }
+        }
+        if (!chunkPool.empty())
+        {
+            componentChunks.push_back(std::move(chunkPool.back()));
+            chunkPool.pop_back();
+        }
+        else
+        {
+            componentChunks.push_back(std::make_unique<Chunk>());
+        }
+        return componentChunks.back().get();
     }
 };
