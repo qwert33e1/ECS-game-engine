@@ -6,6 +6,7 @@
 #include <bitset>
 #include <memory>
 #include <utility>
+#include <cstring>
 
 #define MAX_ENTITIES 5000
 #define MAX_COMPONENTS 32

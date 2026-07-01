@@ -10,6 +10,7 @@ private:
     std::queue<uint32_t> idPool;
     std::vector<std::unique_ptr<Chunk>> chunkPool;
     std::unordered_map<std::bitset<MAX_COMPONENTS>, std::unique_ptr<Archetype>> archMap;
+    std::unordered_map<uint32_t, std::bitset<MAX_COMPONENTS>> entitySignatureMap;
 
     uint32_t getNextId()
     {
@@ -36,13 +37,21 @@ public:
 
         if (!archMap.contains(signature))
         {
-            archMap[signature] = std::unique_ptr<Archetype>(new Archetype(signature, chunkPool);
+            archMap[signature] = std::make_unique<Archetype>(signature, chunkPool);
         }
 
         uint32_t newEntityId = getNextId();
 
-        Archetype[signature].AddEntity(newEntityId, std::forward<Ts>(components)...);
+        archMap[signature]->AddEntity(newEntityId, std::forward<Ts>(components)...);
+        entitySignatureMap[newEntityId] = signature;
 
         return newEntityId;
+    }
+
+    void DestroyEntity(uint32_t entityId)
+    {
+        archMap[entitySignatureMap[entityId]]->RemoveEntity(entityId);
+
+        entitySignatureMap.erase(entityId);
     }
 };
