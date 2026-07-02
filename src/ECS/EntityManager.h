@@ -54,4 +54,12 @@ public:
 
         entitySignatureMap.erase(entityId);
     }
+
+    template <typename T>
+    void AddComponent(uint32_t entityId, T component)
+    {
+        std::vector<uint8_t> oldComponents = archMap[entitySignatureMap[entityId]]->GetEntityComponents(entityId);
+
+        /// TODO: új signatura előálítása, takarítás
+    }
 };

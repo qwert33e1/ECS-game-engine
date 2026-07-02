@@ -24,6 +24,7 @@ private:
     std::vector<std::unique_ptr<Chunk>> componentChunks;
     std::vector<std::unique_ptr<Chunk>> chunkPool;
     std::unordered_map<uint32_t, Chunk *> entityChunkMap;
+    uint32_t componentSizeSum;
     uint32_t maxEntityInChunk;
     uint32_t componentOffsetMap[MAX_COMPONENTS];
 
@@ -42,6 +43,7 @@ public:
             }
         }
 
+        componentSizeSum = entitySize;
         entitySize += sizeof(uint32_t); // space for the lookup table entry
 
         maxEntityInChunk = CHUNK_SIZE / entitySize;
@@ -115,25 +117,10 @@ public:
 
     void RemoveEntity(uint32_t entityId)
     {
-        if (!entityChunkMap.contains(entityId))
-        {
-            return;
-        }
+        Chunk *chunk = nullptr;
+        uint32_t indexInChunk;
 
-        Chunk *chunk = entityChunkMap[entityId];
-        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(chunk->data);
-
-        uint32_t indexInChunk = std::numeric_limits<uint32_t>::max();
-        for (uint32_t i = 0; i < maxEntityInChunk; i++)
-        {
-            if (indexEntityMap[i] == entityId)
-            {
-                indexInChunk = i;
-                break;
-            }
-        }
-
-        if (indexInChunk == std::numeric_limits<uint32_t>::max())
+        if (!GetIndexInChunk(entityId, chunk, indexInChunk))
         {
             return;
         }
@@ -187,5 +174,55 @@ public:
             chunkPool.push_back(std::move(componentChunks.back()));
             componentChunks.pop_back();
         }
+    }
+
+    std::vector<uint8_t> GetEntityComponents(uint32_t entityId)
+    {
+        Chunk *chunk;
+        uint32_t indexInChunk;
+
+        if (!GetIndexInChunk(entityId, chunk, indexInChunk))
+        {
+            return {};
+        }
+
+        std::vector<uint8_t> res;
+        res.resize(componentSizeSum);
+
+        uint32_t currentOffset = 0;
+        for (size_t i = 0; i < signature.size(); i++)
+        {
+            uint32_t offset = componentOffsetMap[i];
+            if (offset != 0)
+            {
+                uint32_t size = ComponentRegistry::globalSizeTable[i];
+
+                std::memcpy(res.data() + currentOffset, chunk->data + offset + indexInChunk * size, size);
+                currentOffset += size;
+            }
+        }
+        return res;
+    }
+
+    bool GetIndexInChunk(uint32_t id, Chunk *chunk, uint32_t &index)
+    {
+        if (!entityChunkMap.contains(id))
+        {
+            return false;
+        }
+
+        chunk = entityChunkMap[id];
+        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(chunk->data);
+
+        for (uint32_t i = 0; i < maxEntityInChunk; i++)
+        {
+            if (indexEntityMap[i] == id)
+            {
+                index = i;
+                return true;
+            }
+        }
+
+        return false;
     }
 };
