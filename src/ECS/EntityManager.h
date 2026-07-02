@@ -53,13 +53,28 @@ public:
         archMap[entitySignatureMap[entityId]]->RemoveEntity(entityId);
 
         entitySignatureMap.erase(entityId);
+
+        idPool.push(entityId);
     }
 
     template <typename T>
     void AddComponent(uint32_t entityId, T component)
     {
-        std::vector<uint8_t> oldComponents = archMap[entitySignatureMap[entityId]]->GetEntityComponents(entityId);
+        std::bitset<MAX_COMPONENTS> oldSignature = entitySignatureMap[entityId];
+        std::vector<uint8_t> oldComponents = archMap[oldSignature]->GetEntityComponents(entityId);
 
-        /// TODO: új signatura előálítása, takarítás
+        if (oldComponents.size() == 0 && oldSignature.count() != 0)
+        {
+            return;
+        }
+
+        archMap[oldSignature]->RemoveEntity(entityId);
+
+        std::bitset<MAX_COMPONENTS> newSignature = oldSignature;
+        newSignature.set(ComponentRegistry::GetId<T>(), true);
+
+        archMap[newSignature]->AddEntity<T>(entityId, oldSignature, oldComponents, component);
+
+        entitySignatureMap[entityId] = newSignature;
     }
 };

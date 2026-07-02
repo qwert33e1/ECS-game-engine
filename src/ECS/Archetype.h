@@ -68,22 +68,57 @@ public:
     void AddEntity(uint32_t entityId, Ts &&...components)
     {
         Chunk *currentChunk = GetCurrentChunk();
-        (PlaceData<Ts>(currentChunk, std::forward<Ts>(components)...), ...);
 
         uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(currentChunk->data);
         indexEntityMap[currentChunk->entityCounter] = entityId;
-
+        uint32_t indexInChunk = currentChunk->entityCounter;
         currentChunk->entityCounter++;
+
+        (PlaceData<Ts>(currentChunk, indexInChunk, std::forward<Ts>(components)...), ...);
 
         entityChunkMap[entityId] = currentChunk;
     }
 
     template <typename T>
-    void PlaceData(Chunk *chunk, const T &data)
+    void AddEntity(uint32_t entityId, std::bitset<MAX_COMPONENTS> oldSignature, std::vector<uint8_t> componentByteStream, T &&newComponent)
+    {
+        Chunk *currentChunk = GetCurrentChunk();
+
+        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(currentChunk->data);
+        indexEntityMap[currentChunk->entityCounter] = entityId;
+        uint32_t indexInChunk = currentChunk->entityCounter;
+        currentChunk->entityCounter++;
+
+        if (componentByteStream.size() != 0)
+        {
+            uint32_t currentOffset = 0;
+            for (size_t i = 0; i < oldSignature.size(); i++)
+            {
+                if (oldSignature.test(i))
+                {
+                    uint32_t offset = componentOffsetMap[i];
+                    if (offset != 0)
+                    {
+                        uint32_t size = ComponentRegistry::globalSizeTable[i];
+
+                        std::memcpy(currentChunk->data + offset + indexInChunk * size, componentByteStream.data() + currentOffset, size);
+                        currentOffset += size;
+                    }
+                }
+            }
+        }
+
+        PlaceData<T>(currentChunk, indexInChunk, std::forward<T>(newComponent));
+
+        entityChunkMap[entityId] = currentChunk;
+    }
+
+    template <typename T>
+    void PlaceData(Chunk *chunk, uint32_t index, const T &data)
     {
         uint32_t offset = componentOffsetMap[ComponentRegistry::GetId<T>()];
         T *dest = reinterpret_cast<T *>(chunk->data + offset);
-        dest[chunk->entityCounter] = data;
+        dest[index] = data;
     }
 
     /// returns the last chunk of the componentChunks vector if it is able to place a new entry
