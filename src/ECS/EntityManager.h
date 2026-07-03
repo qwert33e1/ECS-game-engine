@@ -61,7 +61,7 @@ public:
     void AddComponent(uint32_t entityId, T component)
     {
         std::bitset<MAX_COMPONENTS> oldSignature = entitySignatureMap[entityId];
-        std::vector<uint8_t> oldComponents = archMap[oldSignature]->GetEntityComponents(entityId);
+        std::vector<uint8_t> oldComponents = archMap[oldSignature]->GetEntityComponents(entityId, oldSignature);
 
         if (oldComponents.size() == 0 && oldSignature.count() != 0)
         {
@@ -74,6 +74,28 @@ public:
         newSignature.set(ComponentRegistry::GetId<T>(), true);
 
         archMap[newSignature]->AddEntity<T>(entityId, oldSignature, oldComponents, component);
+
+        entitySignatureMap[entityId] = newSignature;
+    }
+
+    template <typename T>
+    void RemoveComponent(uint32_t entityId)
+    {
+        std::bitset<MAX_COMPONENTS> oldSignature = entitySignatureMap[entityId];
+        std::bitset<MAX_COMPONENTS> newSignature = oldSignature;
+        newSignature.set(ComponentRegistry::GetId<T>(), false);
+
+        // the removable component wont be in the vector
+        std::vector<uint8_t> oldComponents = archMap[oldSignature]->GetEntityComponents(entityId, newSignature);
+
+        if (oldComponents.size() == 0 && newSignature.count() != 0)
+        {
+            return;
+        }
+
+        archMap[oldSignature]->RemoveEntity(entityId);
+
+        archMap[newSignature]->AddEntity(entityId, newSignature, oldComponents);
 
         entitySignatureMap[entityId] = newSignature;
     }

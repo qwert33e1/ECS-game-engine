@@ -79,6 +79,8 @@ public:
         entityChunkMap[entityId] = currentChunk;
     }
 
+    /// this overload is for situations when the entity already existed in an archetype, but its component list gets a new element
+    /// so we must move it to the correct archetype
     template <typename T>
     void AddEntity(uint32_t entityId, std::bitset<MAX_COMPONENTS> oldSignature, std::vector<uint8_t> componentByteStream, T &&newComponent)
     {
@@ -109,6 +111,40 @@ public:
         }
 
         PlaceData<T>(currentChunk, indexInChunk, std::forward<T>(newComponent));
+
+        entityChunkMap[entityId] = currentChunk;
+    }
+
+    /// this overload is for situations when the entity already existed in an archetype, but one element is removed from its component list
+    /// so we must move it to the correct archetype
+    /// REFACTOR: function body is almost the same as in the other overload, and the newSignature should always be equal to the this.signature
+    void AddEntity(uint32_t entityId, std::bitset<MAX_COMPONENTS> newSignature, std::vector<uint8_t> componentByteStream)
+    {
+        Chunk *currentChunk = GetCurrentChunk();
+
+        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(currentChunk->data);
+        indexEntityMap[currentChunk->entityCounter] = entityId;
+        uint32_t indexInChunk = currentChunk->entityCounter;
+        currentChunk->entityCounter++;
+
+        if (componentByteStream.size() != 0)
+        {
+            uint32_t currentOffset = 0;
+            for (size_t i = 0; i < newSignature.size(); i++)
+            {
+                if (newSignature.test(i))
+                {
+                    uint32_t offset = componentOffsetMap[i];
+                    if (offset != 0)
+                    {
+                        uint32_t size = ComponentRegistry::globalSizeTable[i];
+
+                        std::memcpy(currentChunk->data + offset + indexInChunk * size, componentByteStream.data() + currentOffset, size);
+                        currentOffset += size;
+                    }
+                }
+            }
+        }
 
         entityChunkMap[entityId] = currentChunk;
     }
@@ -211,7 +247,9 @@ public:
         }
     }
 
-    std::vector<uint8_t> GetEntityComponents(uint32_t entityId)
+    /// returns a bytestream with with the components based on the _signature
+    /// TODO: sounds dangerous
+    std::vector<uint8_t> GetEntityComponents(uint32_t entityId, std::bitset<MAX_COMPONENTS> _signature)
     {
         Chunk *chunk;
         uint32_t indexInChunk;
@@ -225,17 +263,21 @@ public:
         res.resize(componentSizeSum);
 
         uint32_t currentOffset = 0;
-        for (size_t i = 0; i < signature.size(); i++)
+        for (size_t i = 0; i < _signature.size(); i++)
         {
-            uint32_t offset = componentOffsetMap[i];
-            if (offset != 0)
+            if (_signature.test(i))
             {
-                uint32_t size = ComponentRegistry::globalSizeTable[i];
+                uint32_t offset = componentOffsetMap[i];
+                if (offset != 0)
+                {
+                    uint32_t size = ComponentRegistry::globalSizeTable[i];
 
-                std::memcpy(res.data() + currentOffset, chunk->data + offset + indexInChunk * size, size);
-                currentOffset += size;
+                    std::memcpy(res.data() + currentOffset, chunk->data + offset + indexInChunk * size, size);
+                    currentOffset += size;
+                }
             }
         }
+        res.resize(currentOffset);
         return res;
     }
 
