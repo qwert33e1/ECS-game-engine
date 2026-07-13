@@ -302,4 +302,16 @@ public:
 
         return false;
     }
+
+    std::vector<Chunk *> GetAllChunks()
+    {
+        std::vector<Chunk *> res;
+
+        for (auto it = componentChunks.begin(); it != componentChunks.end(); ++it)
+        {
+            res.push_back(it->get());
+        }
+
+        return res;
+    }
 };

@@ -99,4 +99,23 @@ public:
 
         entitySignatureMap[entityId] = newSignature;
     }
+
+    template <typename T>
+    std::vector<Chunk *> GetEntities(std::bitset<MAX_COMPONENTS> mask)
+    {
+        std::vector<Chunk *> res;
+
+        for (auto it : archMap)
+        {
+            auto key = it.first;
+            key = key & mask;
+            if (key == mask)
+            {
+                auto chunks = it.second->GetAllChunks();
+                res.insert(res.end(), chunks.begin(), chunks.end());
+            }
+        }
+
+        return res;
+    }
 };
