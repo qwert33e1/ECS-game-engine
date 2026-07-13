@@ -73,6 +73,11 @@ public:
         std::bitset<MAX_COMPONENTS> newSignature = oldSignature;
         newSignature.set(ComponentRegistry::GetId<T>(), true);
 
+        if (!archMap.contains(newSignature))
+        {
+            archMap[newSignature] = std::make_unique<Archetype>(signature, chunkPool);
+        }
+
         archMap[newSignature]->AddEntity<T>(entityId, oldSignature, oldComponents, component);
 
         entitySignatureMap[entityId] = newSignature;
@@ -94,6 +99,11 @@ public:
         }
 
         archMap[oldSignature]->RemoveEntity(entityId);
+
+        if (!archMap.contains(newSignature))
+        {
+            archMap[newSignature] = std::make_unique<Archetype>(signature, chunkPool);
+        }
 
         archMap[newSignature]->AddEntity(entityId, newSignature, oldComponents);
 
