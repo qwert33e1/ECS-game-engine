@@ -10,7 +10,7 @@ class Archetype;
 
 struct Chunk
 {
-    Archetype *arcehtype;
+    Archetype *archetype;
     uint32_t entityCounter;
 
     /// First maxEntityInChunk * sizeof(uint32_t) byte is lookup table for entity IDs
@@ -180,7 +180,7 @@ public:
         }
 
         Chunk *newChunk = componentChunks.back().get();
-        newChunk->arcehtype = this;
+        newChunk->archetype = this;
         newChunk->entityCounter = 0;
 
         return newChunk;
@@ -313,5 +313,17 @@ public:
         }
 
         return res;
+    }
+
+    /// --- Getter/setter ---
+
+    uint32_t getMaxEntityInChunk()
+    {
+        return maxEntityInChunk;
+    }
+
+    uint32_t getComponentOffset(uint32_t componentId)
+    {
+        return componentOffsetMap[componentId];
     }
 };

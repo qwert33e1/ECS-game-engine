@@ -110,12 +110,11 @@ public:
         entitySignatureMap[entityId] = newSignature;
     }
 
-    template <typename T>
     std::vector<Chunk *> GetEntities(std::bitset<MAX_COMPONENTS> mask)
     {
         std::vector<Chunk *> res;
 
-        for (auto it : archMap)
+        for (const auto &it : archMap)
         {
             auto key = it.first;
             key = key & mask;

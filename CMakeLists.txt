@@ -20,6 +20,7 @@ add_executable(Program
 )
 
 target_include_directories(Program PRIVATE
+    src
     include/
     external/Glad/include
     external/glm/include
