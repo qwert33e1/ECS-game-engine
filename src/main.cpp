@@ -2,15 +2,32 @@
 #include <Renderer/Renderer2D.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "InputEvent/MouseEventHandler.h"
 
 static int minorNumber = 3, majorNumber = 3;
 static int windowWidth = 600, windowHeight = 600;
 static const char *windowCaption = "Grafika";
 static GLFWwindow *window;
+MouseEventHandler *mouseHandler;
 
 static void error_callback(int error, const char *description)
 {
     fprintf(stderr, "Error: %s\n", description);
+}
+
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
+{
+    double pX, pY;
+    glfwGetCursorPos(window, &pX, &pY);
+    if (action == GLFW_PRESS)
+        mouseHandler->onMousePressed((button == GLFW_MOUSE_BUTTON_LEFT) ? MOUSE_LEFT : MOUSE_RIGHT, (int)pX, (int)pY);
+    else
+        mouseHandler->onMouseReleased((button == GLFW_MOUSE_BUTTON_LEFT) ? MOUSE_LEFT : MOUSE_RIGHT, (int)pX, (int)pY);
+}
+
+void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
+{
+    mouseHandler->onMouseMotion((int)xpos, (int)ypos);
 }
 
 int main(void)
@@ -31,6 +48,9 @@ int main(void)
         glfwTerminate();
         return -1;
     }
+
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     glfwMakeContextCurrent(window);
     gladLoadGL();

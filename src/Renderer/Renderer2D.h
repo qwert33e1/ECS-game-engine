@@ -5,6 +5,7 @@
 #include <math.h>
 #include <vector>
 #include <string>
+#include "common.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -94,7 +95,7 @@ public:
         {
             glUseProgram(shaderId);
 
-            glm::mat4 MVP = glm::ortho(0.0f, 600.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+            glm::mat4 MVP = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
 
             int mvpLocation = glGetUniformLocation(shaderId, "MVP");
             glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, glm::value_ptr(MVP));

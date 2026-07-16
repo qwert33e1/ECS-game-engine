@@ -10,3 +10,6 @@
 
 #define MAX_ENTITIES 5000
 #define MAX_COMPONENTS 32
+
+const int WINDOW_WIDTH = 600;
+const int WINDOW_HEIGHT = 600;
