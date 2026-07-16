@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 enum MouseButton
 {
@@ -10,7 +11,6 @@ enum MouseButton
 class MouseEventHandler
 {
 public:
-    virtual void onMousePressed(MouseButton but, int pX, int pY) {}
-    virtual void onMouseReleased(MouseButton but, int pX, int pY) {}
-    virtual void onMouseMotion(int pX, int pY) {}
+    std::function<void(MouseButton but, int pX, int pY)> onMousePressed;
+    std::function<void(MouseButton but, int pX, int pY)> onMouseReleased;
 };

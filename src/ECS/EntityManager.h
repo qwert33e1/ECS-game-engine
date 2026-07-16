@@ -75,7 +75,7 @@ public:
 
         if (!archMap.contains(newSignature))
         {
-            archMap[newSignature] = std::make_unique<Archetype>(signature, chunkPool);
+            archMap[newSignature] = std::make_unique<Archetype>(newSignature, chunkPool);
         }
 
         archMap[newSignature]->AddEntity<T>(entityId, oldSignature, oldComponents, component);
@@ -102,7 +102,7 @@ public:
 
         if (!archMap.contains(newSignature))
         {
-            archMap[newSignature] = std::make_unique<Archetype>(signature, chunkPool);
+            archMap[newSignature] = std::make_unique<Archetype>(newSignature, chunkPool);
         }
 
         archMap[newSignature]->AddEntity(entityId, newSignature, oldComponents);

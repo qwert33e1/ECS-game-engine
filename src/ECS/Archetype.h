@@ -22,17 +22,15 @@ class Archetype
 private:
     std::bitset<MAX_COMPONENTS> signature;
     std::vector<std::unique_ptr<Chunk>> componentChunks;
-    std::vector<std::unique_ptr<Chunk>> chunkPool;
+    std::vector<std::unique_ptr<Chunk>> &chunkPool;
     std::unordered_map<uint32_t, Chunk *> entityChunkMap;
     uint32_t componentSizeSum;
     uint32_t maxEntityInChunk;
     uint32_t componentOffsetMap[MAX_COMPONENTS];
 
 public:
-    Archetype(std::bitset<MAX_COMPONENTS> _signature, std::vector<std::unique_ptr<Chunk>>)
+    Archetype(std::bitset<MAX_COMPONENTS> _signature, std::vector<std::unique_ptr<Chunk>> &_chunkPool) : signature(_signature), chunkPool(_chunkPool)
     {
-        signature = _signature;
-
         uint32_t entitySize = 0;
 
         for (size_t i = 0; i < signature.size(); i++)
@@ -74,7 +72,7 @@ public:
         uint32_t indexInChunk = currentChunk->entityCounter;
         currentChunk->entityCounter++;
 
-        (PlaceData<Ts>(currentChunk, indexInChunk, std::forward<Ts>(components)...), ...);
+        (PlaceData<Ts>(currentChunk, indexInChunk, std::forward<Ts>(components)), ...);
 
         entityChunkMap[entityId] = currentChunk;
     }

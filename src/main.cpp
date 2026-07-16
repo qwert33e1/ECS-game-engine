@@ -3,12 +3,14 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "InputEvent/MouseEventHandler.h"
+#include "Game/Game.h"
 
 static int minorNumber = 3, majorNumber = 3;
 static int windowWidth = 600, windowHeight = 600;
-static const char *windowCaption = "Grafika";
+static const char *windowCaption = "gaming";
 static GLFWwindow *window;
-MouseEventHandler *mouseHandler;
+
+MouseEventHandler *mouseHandler = nullptr;
 
 static void error_callback(int error, const char *description)
 {
@@ -23,11 +25,6 @@ void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
         mouseHandler->onMousePressed((button == GLFW_MOUSE_BUTTON_LEFT) ? MOUSE_LEFT : MOUSE_RIGHT, (int)pX, (int)pY);
     else
         mouseHandler->onMouseReleased((button == GLFW_MOUSE_BUTTON_LEFT) ? MOUSE_LEFT : MOUSE_RIGHT, (int)pX, (int)pY);
-}
-
-void cursor_position_callback(GLFWwindow *window, double xpos, double ypos)
-{
-    mouseHandler->onMouseMotion((int)xpos, (int)ypos);
 }
 
 int main(void)
@@ -50,7 +47,6 @@ int main(void)
     }
 
     glfwSetMouseButtonCallback(window, mouse_button_callback);
-    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     glfwMakeContextCurrent(window);
     gladLoadGL();
@@ -61,14 +57,8 @@ int main(void)
 
     /// -----------
     Renderer2D renderer;
-
-    unsigned int whiteTexture;
-    glGenTextures(1, &whiteTexture);
-    glBindTexture(GL_TEXTURE_2D, whiteTexture);
-    unsigned char whitePixel[] = {255, 255, 255, 255};
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, whitePixel);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    Game game = Game(renderer);
+    mouseHandler = &game.GetMouseHandler();
 
     /// ------------------
 
@@ -79,15 +69,7 @@ int main(void)
         glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, whiteTexture);
-
-        renderer.AddQuad(glm::vec2(300.0f, 300.0f), 150.0f, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
-        renderer.updateGPU();
-        renderer.Draw();
-
-        renderer.clear();
+        game.Update();
 
         glfwSwapBuffers(window);
     }

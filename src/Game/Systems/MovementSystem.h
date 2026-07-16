@@ -12,7 +12,7 @@ class MovementSystem
 public:
     MovementSystem(EntityManager &em) : entityManager(em) {}
 
-    void Update(double dt)
+    void Update(float dt)
     {
         uint32_t posId = ComponentRegistry::GetId<Position>();
         uint32_t velId = ComponentRegistry::GetId<Velocity>();

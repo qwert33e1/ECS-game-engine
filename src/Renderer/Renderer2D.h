@@ -55,6 +55,8 @@ class Renderer2D
     unsigned int vao, vbo;
     std::vector<VtxData> vtx;
 
+    unsigned int whiteTexture;
+
 public:
     Renderer2D()
     {
@@ -72,6 +74,13 @@ public:
         glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, nb, (void *)offsetof(VtxData, color));
 
         shaderId = createShader();
+
+        glGenTextures(1, &whiteTexture);
+        glBindTexture(GL_TEXTURE_2D, whiteTexture);
+        unsigned char whitePixel[] = {255, 255, 255, 255};
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, whitePixel);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
     void updateGPU()
@@ -94,6 +103,9 @@ public:
         if (vtx.size() > 0)
         {
             glUseProgram(shaderId);
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, whiteTexture);
 
             glm::mat4 MVP = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
 

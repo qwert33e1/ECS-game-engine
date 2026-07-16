@@ -13,7 +13,7 @@ class RenderSystem
     Renderer2D &renderer;
 
 public:
-    RenderSystem(EntityManager em, Renderer2D renderer) : entityManager(em), renderer(renderer) {}
+    RenderSystem(EntityManager &em, Renderer2D &renderer) : entityManager(em), renderer(renderer) {}
 
     void Draw()
     {
@@ -45,5 +45,8 @@ public:
                 renderer.AddQuad(glm::vec2(pos->x, pos->y), 100.0f, sprite->color);
             }
         }
+        renderer.updateGPU();
+        renderer.Draw();
+        renderer.clear();
     }
 };
