@@ -13,7 +13,6 @@ add_executable(Program
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR NOT CMAKE_BUILD_TYPE)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        message(STATUS "AddressSanitizer (ASan) engedélyezve a Debug buildhez.")
         
         target_compile_options(Program PRIVATE -fsanitize=address -fno-omit-frame-pointer)
         target_link_options(Program PRIVATE -fsanitize=address)

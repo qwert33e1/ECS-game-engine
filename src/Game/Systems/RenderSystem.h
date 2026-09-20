@@ -32,7 +32,6 @@ public:
 
         for (auto chunk : entityChunks)
         {
-            uint32_t maxEntityInChunk = chunk->archetype->getMaxEntityInChunk();
             uint32_t posOffset = chunk->archetype->getComponentOffset(posId);
             uint32_t spriteOffset = chunk->archetype->getComponentOffset(spriteId);
             uint32_t entityCount = chunk->entityCounter;

@@ -25,4 +25,4 @@ echo "Starting the program..."
 echo ""
 ./Program
 echo ""
-echo "Closing the program"
+echo "Code Execution Successful"

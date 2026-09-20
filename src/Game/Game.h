@@ -1,13 +1,18 @@
 #pragma once
+
 #include "common.h"
 #include "ECS/EntityManager.h"
-#include "InputEvent/MouseEventHandler.h"
+#include "Input/MouseEventHandler.h"
 #include "Game/Components/Position.h"
 #include "Game/Components/Velocity.h"
 #include "Game/Components/Sprite.h"
+#include "Game/Components/PlayerControlled.h"
+#include "Game/Components/TargetPosition.h"
 #include "Renderer/Renderer2D.h"
 #include "Game/Systems/MovementSystem.h"
 #include "Game/Systems/RenderSystem.h"
+#include "Game/Systems/PlayerInputSystem.h"
+#include "Game/Systems/TargetSystem.h"
 
 class Game
 {
@@ -16,21 +21,22 @@ class Game
     Renderer2D &renderer;
     MovementSystem movementSystem = MovementSystem(entityManager);
     RenderSystem renderSystem = RenderSystem(entityManager, renderer);
+    PlayerInputSystem playerInputSystem;
+    PlayerInputManager &inputManager;
+    TargetSystem targetSystem;
 
 public:
-    Game(Renderer2D &renderer) : renderer(renderer)
+    Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager)
     {
-        mouseEventHandler.onMousePressed = [this](MouseButton but, int pX, int pY)
-        {
-            this->entityManager.CreateEntity(Position{(float)pX, (float)pY}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)});
-        };
-        mouseEventHandler.onMouseReleased = [this](MouseButton but, int pX, int pY) {};
+        this->entityManager.CreateEntity(Position{0.0f, 0.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, PlayerControlled{}, TargetPosition{0.0f, 0.0f});
     }
 
     void Update()
     {
         movementSystem.Update(0.1f);
         renderSystem.Draw();
+        targetSystem.Update(entityManager);
+        playerInputSystem.Update(entityManager, inputManager);
     }
 
     MouseEventHandler &GetMouseHandler()

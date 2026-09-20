@@ -2,13 +2,16 @@
 #include <Renderer/Renderer2D.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "InputEvent/MouseEventHandler.h"
+#include "Input/MouseEventHandler.h"
 #include "Game/Game.h"
+#include "Input/PlayerInputManager.h"
 
 static int minorNumber = 3, majorNumber = 3;
 static int windowWidth = 600, windowHeight = 600;
 static const char *windowCaption = "gaming";
 static GLFWwindow *window;
+
+PlayerInputManager inputManager;
 
 MouseEventHandler *mouseHandler = nullptr;
 
@@ -19,12 +22,16 @@ static void error_callback(int error, const char *description)
 
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
-    double pX, pY;
-    glfwGetCursorPos(window, &pX, &pY);
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
     if (action == GLFW_PRESS)
-        mouseHandler->onMousePressed((button == GLFW_MOUSE_BUTTON_LEFT) ? MOUSE_LEFT : MOUSE_RIGHT, (int)pX, (int)pY);
-    else
-        mouseHandler->onMouseReleased((button == GLFW_MOUSE_BUTTON_LEFT) ? MOUSE_LEFT : MOUSE_RIGHT, (int)pX, (int)pY);
+    {
+        inputManager.PressMouseButton(button, x, y);
+    }
+    else if (action == GLFW_RELEASE)
+    {
+        inputManager.ReleaseMouseButton(button, x, y);
+    }
 }
 
 int main(void)
@@ -57,13 +64,14 @@ int main(void)
 
     /// -----------
     Renderer2D renderer;
-    Game game = Game(renderer);
+    Game game = Game(renderer, inputManager);
     mouseHandler = &game.GetMouseHandler();
 
     /// ------------------
 
     while (!glfwWindowShouldClose(window))
     {
+        inputManager.Update();
         glfwPollEvents();
 
         glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
