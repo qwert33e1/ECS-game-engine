@@ -8,6 +8,7 @@
 #include "Game/Components/Sprite.h"
 #include "Game/Components/PlayerControlled.h"
 #include "Game/Components/TargetPosition.h"
+#include "Game/Components/Speed.h"
 #include "Renderer/Renderer2D.h"
 #include "Game/Systems/MovementSystem.h"
 #include "Game/Systems/RenderSystem.h"
@@ -28,7 +29,7 @@ class Game
 public:
     Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager)
     {
-        this->entityManager.CreateEntity(Position{0.0f, 0.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, PlayerControlled{}, TargetPosition{0.0f, 0.0f});
+        this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{5.0f});
     }
 
     void Update()

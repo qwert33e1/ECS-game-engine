@@ -41,7 +41,7 @@ public:
                 Position *pos = reinterpret_cast<Position *>(chunk->data + posOffset + i * posSize);
                 Sprite *sprite = reinterpret_cast<Sprite *>(chunk->data + spriteOffset + i * spriteSize);
 
-                renderer.AddQuad(glm::vec2(pos->x, pos->y), 100.0f, sprite->color);
+                renderer.AddQuad(glm::vec2(pos->x, pos->y), 50.0f, sprite->color);
             }
         }
         renderer.updateGPU();

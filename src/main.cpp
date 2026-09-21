@@ -34,6 +34,20 @@ void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
     }
 }
 
+void cursor_pos_callback(GLFWwindow *window, double x, double y)
+{
+    inputManager.SetMousePosition(x, y);
+}
+
+static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS || action == GLFW_REPEAT)
+        inputManager.PressKey(key);
+    printf("KEY WAS PRESSED: %d\n", key);
+    if (action == GLFW_RELEASE)
+        inputManager.ReleaseKey(key);
+}
+
 int main(void)
 {
     glfwSetErrorCallback(error_callback);
@@ -54,6 +68,8 @@ int main(void)
     }
 
     glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCursorPosCallback(window, cursor_pos_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     glfwMakeContextCurrent(window);
     gladLoadGL();
