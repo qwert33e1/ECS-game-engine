@@ -46,7 +46,7 @@ public:
                 Position *pos = reinterpret_cast<Position *>(chunk->data + posOffset + i * posSize);
                 Velocity *vel = reinterpret_cast<Velocity *>(chunk->data + velOffset + i * velSize);
                 Speed *speed = reinterpret_cast<Speed *>(chunk->data + speedOffset + i * speedSize);
-                TargetPosition *target = reinterpret_cast<TargetPosition *>(chunk->data + targetOffset + i * velSize);
+                TargetPosition *target = reinterpret_cast<TargetPosition *>(chunk->data + targetOffset + i * targetSize);
 
                 float dist = glm::length(glm::vec2(target->x - pos->x, target->y - pos->y));
 

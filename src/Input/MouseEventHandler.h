@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 
+/* obsolete */
 enum MouseButton
 {
     MOUSE_LEFT,

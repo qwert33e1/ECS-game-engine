@@ -4,8 +4,12 @@
 #include "ECS/EntityManager.h"
 #include "Game/Components/Position.h"
 #include "Game/Components/Sprite.h"
+#include "Game/Components/Camera.h"
 #include "Renderer/Renderer2D.h"
+#include "Utility/Coordinates.h"
 #include <glm/glm.hpp>
+
+/// TODO: camera entity, pos conversion
 
 class RenderSystem
 {
@@ -17,6 +21,19 @@ public:
 
     void Draw()
     {
+        // getting the camera entity
+        uint32_t cameraId = ComponentRegistry::GetId<Camera>();
+        uint32_t cameraSize = ComponentRegistry::globalSizeTable[cameraId];
+        std::bitset<MAX_COMPONENTS> cameraMask;
+        cameraMask.set(cameraId, true);
+        auto cameraChunk = (entityManager.GetEntities(cameraMask)).front();
+        if (cameraChunk->entityCounter == 0)
+        {
+            return;
+        }
+        uint32_t cameraOffset = cameraChunk->archetype->getComponentOffset(cameraId);
+        Camera *camera = reinterpret_cast<Camera *>(cameraChunk->data + cameraOffset);
+
         uint32_t posId = ComponentRegistry::GetId<Position>();
         uint32_t spriteId = ComponentRegistry::GetId<Sprite>();
 
@@ -41,7 +58,10 @@ public:
                 Position *pos = reinterpret_cast<Position *>(chunk->data + posOffset + i * posSize);
                 Sprite *sprite = reinterpret_cast<Sprite *>(chunk->data + spriteOffset + i * spriteSize);
 
-                renderer.AddQuad(glm::vec2(pos->x, pos->y), 50.0f, sprite->color);
+                glm::vec2 sPos = Coordinates::WorldToScreen(pos->x, pos->y, *camera);
+                printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
+
+                renderer.AddQuad(sPos, 50.0f, sprite->color);
             }
         }
         renderer.updateGPU();
