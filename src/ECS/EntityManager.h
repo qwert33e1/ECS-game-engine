@@ -16,6 +16,7 @@ private:
     {
         uint32_t ret = idPool.front();
         idPool.pop();
+        printf("ENTITY ID : %d - ID POOL LENGTH : %lu\n", ret, idPool.size());
         return ret;
     }
 
@@ -78,7 +79,7 @@ public:
             archMap[newSignature] = std::make_unique<Archetype>(newSignature, chunkPool);
         }
 
-        archMap[newSignature]->AddEntity<T>(entityId, oldSignature, oldComponents, component);
+        archMap[newSignature]->AddEntity<T>(entityId, oldSignature, oldComponents, std::forward<T>(component));
 
         entitySignatureMap[entityId] = newSignature;
     }

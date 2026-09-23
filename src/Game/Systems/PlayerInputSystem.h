@@ -69,7 +69,7 @@ public:
                 {
                     float dist = glm::length(glm::vec2(wPos.x - pos->x, wPos.y - pos->y));
 
-                    entityManager.CreateEntity(Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist, (wPos.y - pos->y) / dist}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)});
+                    entityManager.CreateEntity(Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 10.0f, (wPos.y - pos->y) / dist * 10.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)});
                 }
             }
         }

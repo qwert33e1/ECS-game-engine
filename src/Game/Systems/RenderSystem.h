@@ -59,7 +59,7 @@ public:
                 Sprite *sprite = reinterpret_cast<Sprite *>(chunk->data + spriteOffset + i * spriteSize);
 
                 glm::vec2 sPos = Coordinates::WorldToScreen(pos->x, pos->y, *camera);
-                printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
+                // printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
 
                 renderer.AddQuad(sPos, 50.0f, sprite->color);
             }

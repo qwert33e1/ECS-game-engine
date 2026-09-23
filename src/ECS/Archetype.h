@@ -279,21 +279,23 @@ public:
         return res;
     }
 
-    bool GetIndexInChunk(uint32_t id, Chunk *chunk, uint32_t &index)
+    // sets outChunk andoutIndex to the chunk which the entity is in and the index where the entity is
+    // returns false if the id is not existing in the archetype
+    bool GetIndexInChunk(uint32_t id, Chunk *&outChunk, uint32_t &outIndex)
     {
         if (!entityChunkMap.contains(id))
         {
             return false;
         }
 
-        chunk = entityChunkMap[id];
-        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(chunk->data);
+        outChunk = entityChunkMap[id];
+        uint32_t *indexEntityMap = reinterpret_cast<uint32_t *>(outChunk->data);
 
         for (uint32_t i = 0; i < maxEntityInChunk; i++)
         {
             if (indexEntityMap[i] == id)
             {
-                index = i;
+                outIndex = i;
                 return true;
             }
         }

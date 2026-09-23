@@ -44,6 +44,6 @@ public:
         camera->x = pos->x;
         camera->y = pos->y;
 
-        printf("CAMERA: (%f, %f)\n", camera->x, camera->y);
+        // printf("CAMERA: (%f, %f)\n", camera->x, camera->y);
     }
 };
