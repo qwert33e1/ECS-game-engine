@@ -1,12 +1,13 @@
 #pragma once
 
+#include <algorithm>
 #include "common.h"
 #include "Game/Components/Position.h"
 #include "Game/Components/MapBounds.h"
-#include "Game/Components/DeadTag.h"
+#include "Game/Components/PlayerControlled.h"
 #include "ECS/EntityManager.h"
 
-class OutOfBoundsSystem
+class PlayerBoundsSystem
 {
 public:
     void Update(EntityManager &entityManager)
@@ -28,10 +29,13 @@ public:
 
         uint32_t posId = ComponentRegistry::GetId<Position>();
         uint32_t posSize = ComponentRegistry::globalSizeTable[posId];
+        uint32_t pcId = ComponentRegistry::GetId<PlayerControlled>();
+        uint32_t pcSize = ComponentRegistry::globalSizeTable[pcId];
 
         std::bitset<MAX_COMPONENTS> bitmask;
 
         bitmask.set(posId, true);
+        bitmask.set(pcId, true);
 
         std::vector<Chunk *> entityChunks = entityManager.GetEntities(bitmask);
 
@@ -45,17 +49,15 @@ public:
             {
                 Position *pos = reinterpret_cast<Position *>(chunk->data + posOffset + i * posSize);
 
-                if (abs(pos->x) > (bounds->width / 2.0f) || abs(pos->y) > (bounds->height / 2.0f))
-                {
-                    outOfBoundsEntities.push_back(indexEntityMap[i]);
-                }
-            }
-        }
+                float max_x = bounds->width / 2.0f;
+                float min_x = -max_x;
 
-        for (uint32_t entity : outOfBoundsEntities)
-        {
-            entityManager.AddComponent<DeadTag>(entity, DeadTag{});
-            printf("DEADTAG\n");
+                float max_y = bounds->height / 2.0f;
+                float min_y = -max_y;
+
+                pos->x = std::clamp(pos->x, min_x, max_x);
+                pos->y = std::clamp(pos->y, min_y, max_y);
+            }
         }
     }
 };

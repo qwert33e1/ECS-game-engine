@@ -19,6 +19,7 @@
 #include "Game/Systems/CameraFollowSystem.h"
 #include "Game/Systems/OutOfBoundsSystem.h"
 #include "Game/Systems/CleanUpSystem.h"
+#include "Game/Systems/PlayerBoundsSystem"
 
 class Game
 {
@@ -33,13 +34,14 @@ class Game
     CameraFollowSystem cameraFollowSystem;
     OutOfBoundsSystem outOfBoundsSystem;
     CleanUpSystem cleanUpSystem;
+    PlayerBoundsSystem playerBoundsSystem;
 
 public:
     Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager)
     {
         this->entityManager.CreateEntity(Camera{300.0f, 300.0f, 1.0f, 600, 600});
         this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{5.0f});
-        this->entityManager.CreateEntity(MapBounds{5000.0f, 5000.0f});
+        this->entityManager.CreateEntity(MapBounds{1000.0f, 1000.0f});
     }
 
     void Update()
@@ -49,6 +51,7 @@ public:
         targetSystem.Update(entityManager);
         cameraFollowSystem.Update(entityManager);
         playerInputSystem.Update(entityManager, inputManager);
+        playerBoundsSystem.Update(entityManager);
         outOfBoundsSystem.Update(entityManager);
         cleanUpSystem.Update(entityManager);
     }
