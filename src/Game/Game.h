@@ -19,7 +19,7 @@
 #include "Game/Systems/CameraFollowSystem.h"
 #include "Game/Systems/OutOfBoundsSystem.h"
 #include "Game/Systems/CleanUpSystem.h"
-#include "Game/Systems/PlayerBoundsSystem"
+#include "Game/Systems/PlayerBoundsSystem.h"
 
 class Game
 {
