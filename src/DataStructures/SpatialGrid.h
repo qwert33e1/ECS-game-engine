@@ -22,19 +22,30 @@ public:
         cells.resize(this->columns * this->rows);
     }
 
-    void Add(float x, float y, uint32_t id)
+    void Add(float x, float y, float radius, uint32_t id)
     {
         x += width / 2.0f;
         y += height / 2.0f;
 
-        int gridX = static_cast<int>(x / cellSize);
-        int gridY = static_cast<int>(y / cellSize);
+        float minX = x - radius;
+        float maxX = x + radius;
+        float minY = y - radius;
+        float maxY = y + radius;
 
-        if (gridX < 0 || gridX >= columns || gridY < 0 || gridY >= rows)
+        int gridMinX = static_cast<int>(minX / cellSize);
+        int gridMaxX = static_cast<int>(maxX / cellSize);
+        int gridMinY = static_cast<int>(minY / cellSize);
+        int gridMaxY = static_cast<int>(maxY / cellSize);
+
+        for (int i = gridMinY; i <= gridMaxY; i++)
         {
-            return;
+            for (int j = gridMinX; j <= gridMaxX; j++)
+            {
+                if (j >= 0 && j < columns && i >= 0 && i < rows)
+                {
+                    cells[i * columns + j].push_back(id);
+                }
+            }
         }
-
-        cells[gridY * columns + gridX].push_back(id);
     }
 };
