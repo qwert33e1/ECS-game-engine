@@ -35,8 +35,8 @@ public:
             return;
         }
 
-        uint32_t cameraOffset = cameraChunk->archetype->getComponentOffset(cameraId);
-        uint32_t posOffset = playerChunk->archetype->getComponentOffset(posId);
+        uint32_t cameraOffset = cameraChunk->archetype->GetComponentOffset(cameraId);
+        uint32_t posOffset = playerChunk->archetype->GetComponentOffset(posId);
 
         Camera *camera = reinterpret_cast<Camera *>(cameraChunk->data + cameraOffset);
         Position *pos = reinterpret_cast<Position *>(playerChunk->data + posOffset);

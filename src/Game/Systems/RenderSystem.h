@@ -31,7 +31,7 @@ public:
         {
             return;
         }
-        uint32_t cameraOffset = cameraChunk->archetype->getComponentOffset(cameraId);
+        uint32_t cameraOffset = cameraChunk->archetype->GetComponentOffset(cameraId);
         Camera *camera = reinterpret_cast<Camera *>(cameraChunk->data + cameraOffset);
 
         uint32_t posId = ComponentRegistry::GetId<Position>();
@@ -49,8 +49,8 @@ public:
 
         for (auto chunk : entityChunks)
         {
-            uint32_t posOffset = chunk->archetype->getComponentOffset(posId);
-            uint32_t spriteOffset = chunk->archetype->getComponentOffset(spriteId);
+            uint32_t posOffset = chunk->archetype->GetComponentOffset(posId);
+            uint32_t spriteOffset = chunk->archetype->GetComponentOffset(spriteId);
             uint32_t entityCount = chunk->entityCounter;
 
             for (uint32_t i = 0; i < entityCount; i++)

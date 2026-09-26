@@ -189,7 +189,7 @@ public:
         Chunk *chunk = nullptr;
         uint32_t indexInChunk;
 
-        if (!GetIndexInChunk(entityId, chunk, indexInChunk))
+        if (!GetEntityIndexInChunk(entityId, chunk, indexInChunk))
         {
             return;
         }
@@ -246,13 +246,12 @@ public:
     }
 
     /// returns a bytestream with with the components based on the _signature
-    /// TODO: sounds dangerous
     std::vector<uint8_t> GetEntityComponents(uint32_t entityId, std::bitset<MAX_COMPONENTS> _signature)
     {
         Chunk *chunk;
         uint32_t indexInChunk;
 
-        if (!GetIndexInChunk(entityId, chunk, indexInChunk))
+        if (!GetEntityIndexInChunk(entityId, chunk, indexInChunk))
         {
             return {};
         }
@@ -279,9 +278,9 @@ public:
         return res;
     }
 
-    // sets outChunk andoutIndex to the chunk which the entity is in and the index where the entity is
+    // sets outChunk and outIndex to the chunk which contains the entity and the index where the entity is
     // returns false if the id is not existing in the archetype
-    bool GetIndexInChunk(uint32_t id, Chunk *&outChunk, uint32_t &outIndex)
+    bool GetEntityIndexInChunk(uint32_t id, Chunk *&outChunk, uint32_t &outIndex)
     {
         if (!entityChunkMap.contains(id))
         {
@@ -317,12 +316,12 @@ public:
 
     /// --- Getter/setter ---
 
-    uint32_t getMaxEntityInChunk()
+    uint32_t GetMaxEntityInChunk()
     {
         return maxEntityInChunk;
     }
 
-    uint32_t getComponentOffset(uint32_t componentId)
+    uint32_t GetComponentOffset(uint32_t componentId)
     {
         return componentOffsetMap[componentId];
     }

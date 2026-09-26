@@ -11,6 +11,7 @@
 #include "Game/Components/Speed.h"
 #include "Game/Components/Camera.h"
 #include "Game/Components/MapBounds.h"
+#include "Game/Components/Hostile.h"
 #include "Renderer/Renderer2D.h"
 #include "Game/Systems/MovementSystem.h"
 #include "Game/Systems/RenderSystem.h"
@@ -20,6 +21,8 @@
 #include "Game/Systems/OutOfBoundsSystem.h"
 #include "Game/Systems/CleanUpSystem.h"
 #include "Game/Systems/PlayerBoundsSystem.h"
+#include "Game/Systems/CollisionDetectionSystem.h"
+#include "Game/Systems/DamageSystem.h"
 
 class Game
 {
@@ -35,13 +38,17 @@ class Game
     OutOfBoundsSystem outOfBoundsSystem;
     CleanUpSystem cleanUpSystem;
     PlayerBoundsSystem playerBoundsSystem;
+    CollisionDetectionSystem collisionDetectionSystem;
+    DamageSystem damageSystem;
 
 public:
     Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager)
     {
-        this->entityManager.CreateEntity(Camera{300.0f, 300.0f, 1.0f, 600, 600});
-        this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{5.0f});
-        this->entityManager.CreateEntity(MapBounds{1000.0f, 1000.0f});
+        this->entityManager.CreateEntity(Camera{300.0f, 300.0f, 1.0f, WINDOW_WIDTH, WINDOW_HEIGHT});
+        this->entityManager.CreateEntity(Position{400.0f, 400.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{0.0f});
+        this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{5.0f}, Collider{25.0f});
+        this->entityManager.CreateEntity(Position{200.0f, 200.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, Hostile{}, HealthPoint{10.0f, 10.0f}, Speed{5.0f}, Collider{25.0f});
+        this->entityManager.CreateEntity(MapBounds{10000.0f, 10000.0f});
     }
 
     void Update()
@@ -53,7 +60,10 @@ public:
         playerInputSystem.Update(entityManager, inputManager);
         playerBoundsSystem.Update(entityManager);
         outOfBoundsSystem.Update(entityManager);
+        collisionDetectionSystem.Update(entityManager);
+        damageSystem.Update(entityManager);
         cleanUpSystem.Update(entityManager);
+        entityManager.ClearCollisionEvents();
     }
 
     MouseEventHandler &GetMouseHandler()

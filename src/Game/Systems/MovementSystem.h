@@ -29,8 +29,8 @@ public:
 
         for (auto chunk : entityChunks)
         {
-            uint32_t posOffset = chunk->archetype->getComponentOffset(posId);
-            uint32_t velOffset = chunk->archetype->getComponentOffset(velId);
+            uint32_t posOffset = chunk->archetype->GetComponentOffset(posId);
+            uint32_t velOffset = chunk->archetype->GetComponentOffset(velId);
             uint32_t entityCount = chunk->entityCounter;
 
             for (uint32_t i = 0; i < entityCount; i++)

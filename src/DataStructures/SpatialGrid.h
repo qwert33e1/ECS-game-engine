@@ -3,6 +3,14 @@
 #include <vector>
 #include <cstdint>
 
+struct FatCell
+{
+    uint32_t id;
+    float x;
+    float y;
+    float radius;
+};
+
 class SpatialGrid
 {
     float width;
@@ -11,13 +19,13 @@ class SpatialGrid
     int rows;
     float cellSize;
 
-    std::vector<std::vector<uint32_t>> cells;
+    std::vector<std::vector<FatCell>> cells;
 
 public:
     SpatialGrid(float cellSize, float width, float height) : cellSize(cellSize), width(width), height(height)
     {
-        this->columns = width / cellSize;
-        this->rows = height / cellSize;
+        this->columns = static_cast<int>(width / cellSize) + 1;
+        this->rows = static_cast<int>(height / cellSize) + 1;
 
         cells.resize(this->columns * this->rows);
     }
@@ -43,9 +51,14 @@ public:
             {
                 if (j >= 0 && j < columns && i >= 0 && i < rows)
                 {
-                    cells[i * columns + j].push_back(id);
+                    cells[i * columns + j].push_back(FatCell{id, x, y, radius});
                 }
             }
         }
+    }
+
+    std::vector<std::vector<FatCell>> GetCells()
+    {
+        return cells;
     }
 };

@@ -7,7 +7,7 @@
 #include "Input/PlayerInputManager.h"
 
 static int minorNumber = 3, majorNumber = 3;
-static int windowWidth = 600, windowHeight = 600;
+static int windowWidth = WINDOW_WIDTH, windowHeight = WINDOW_HEIGHT;
 static const char *windowCaption = "gaming";
 static GLFWwindow *window;
 

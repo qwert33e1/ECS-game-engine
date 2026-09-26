@@ -7,6 +7,8 @@
 #include "Game/Components/PlayerControlled.h"
 #include "Game/Components/TargetPosition.h"
 #include "Game/Components/Speed.h"
+#include "Game/Components/Projectile.h"
+#include "Game/Components/Collider.h"
 #include "Input/PlayerInputManager.h"
 #include "Utility/Coordinates.h"
 #include <glm/glm.hpp>
@@ -26,7 +28,7 @@ public:
         {
             return;
         }
-        uint32_t cameraOffset = cameraChunk->archetype->getComponentOffset(cameraId);
+        uint32_t cameraOffset = cameraChunk->archetype->GetComponentOffset(cameraId);
         Camera *camera = reinterpret_cast<Camera *>(cameraChunk->data + cameraOffset);
 
         uint32_t posId = ComponentRegistry::GetId<Position>();
@@ -46,8 +48,8 @@ public:
 
         for (auto chunk : entityChunks)
         {
-            uint32_t posOffset = chunk->archetype->getComponentOffset(posId);
-            uint32_t targetOffset = chunk->archetype->getComponentOffset(targetId);
+            uint32_t posOffset = chunk->archetype->GetComponentOffset(posId);
+            uint32_t targetOffset = chunk->archetype->GetComponentOffset(targetId);
             uint32_t entityCount = chunk->entityCounter;
 
             for (uint32_t i = 0; i < entityCount; i++)
@@ -62,14 +64,18 @@ public:
                     target->x = wPos.x;
                     target->y = wPos.y;
 
-                    printf("SET TARGET :: sTarget : (%f, %f) - wTarget : (%f, %f) - pos : (%f, %f)\n ", inputManager.mouseX, inputManager.mouseY, wPos.x, wPos.y, pos->x, pos->y);
+                    printf("SET TARGET :: sTarget : (%f, %f) - wTarget : (%f, %f) - pos : (%f, %f)\n", inputManager.mouseX, inputManager.mouseY, wPos.x, wPos.y, pos->x, pos->y);
                 }
 
                 if (inputManager.IsKeyJustPressed('Q'))
                 {
                     float dist = glm::length(glm::vec2(wPos.x - pos->x, wPos.y - pos->y));
-
-                    entityManager.CreateEntity(Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 10.0f, (wPos.y - pos->y) / dist * 10.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)});
+                    // for (int i = 0; i < 200; i++)
+                    // {
+                    //     float angle = ((float)i / 200) * 2.0f * 3.14159265f;
+                    //     entityManager.CreateEntity(Position{pos->x, pos->y}, Velocity{cos(angle) * 10.0f, sin(angle) * 10.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)});
+                    // }
+                    entityManager.CreateEntity(Projectile{100.0f}, Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 10.0f, (wPos.y - pos->y) / dist * 10.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, Collider{25.0f});
                 }
             }
         }

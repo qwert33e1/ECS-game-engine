@@ -3,6 +3,7 @@
 #include "common.h"
 #include "Archetype.h"
 #include "ComponentRegistry.h"
+#include "DataStructures/CollisionEvent.h"
 
 class EntityManager
 {
@@ -11,6 +12,8 @@ private:
     std::vector<std::unique_ptr<Chunk>> chunkPool;
     std::unordered_map<std::bitset<MAX_COMPONENTS>, std::unique_ptr<Archetype>> archMap;
     std::unordered_map<uint32_t, std::bitset<MAX_COMPONENTS>> entitySignatureMap;
+
+    std::vector<CollisionEvent> collisionEvents;
 
     uint32_t getNextId()
     {
@@ -128,4 +131,26 @@ public:
 
         return res;
     }
+
+    template <typename T>
+    bool HasComponent(uint32_t id)
+    {
+        auto signature = entitySignatureMap[id];
+
+        auto componentId = ComponentRegistry::GetId<T>();
+        return signature.test(componentId);
+    }
+
+    // sets outChunk and outIndex to the chunk which contains the entity and the index where the entity is
+    // returns false if the id is not existing in the archetype
+    bool GetEntityIndexInChunk(uint32_t id, Chunk *&outChunk, uint32_t &outIndex)
+    {
+        return archMap[entitySignatureMap[id]]->GetEntityIndexInChunk(id, outChunk, outIndex);
+    }
+
+    void PushCollisionEvent(CollisionEvent event) { collisionEvents.push_back(event); }
+
+    std::vector<CollisionEvent> GetCollisionEvents() { return collisionEvents; }
+
+    void ClearCollisionEvents() { collisionEvents.clear(); }
 };
