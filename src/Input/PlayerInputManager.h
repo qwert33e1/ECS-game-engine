@@ -11,10 +11,10 @@ class PlayerInputManager
     std::bitset<256> previousKeys;
 
 public:
-    float mouseX = 0.0;
-    float mouseY = 0.0;
-    float previousMouseX = 0.0;
-    float previousMouseY = 0.0;
+    float mouseX = 0.0f;
+    float mouseY = 0.0f;
+    float previousMouseX = 0.0f;
+    float previousMouseY = 0.0f;
 
     void Update()
     {
@@ -24,7 +24,7 @@ public:
         previousKeys = currentKeys;
     }
 
-    void PressMouseButton(unsigned int keyCode, double x, double y)
+    void PressMouseButton(unsigned int keyCode, float x, float y)
     {
         if (keyCode < 8)
         {
@@ -34,7 +34,7 @@ public:
         }
     }
 
-    void ReleaseMouseButton(unsigned int keyCode, double x, double y)
+    void ReleaseMouseButton(unsigned int keyCode, float x, float y)
     {
         if (keyCode < 8)
         {
@@ -60,7 +60,7 @@ public:
         }
     }
 
-    void SetMousePosition(double x, double y)
+    void SetMousePosition(float x, float y)
     {
         mouseX = x;
         mouseY = y;

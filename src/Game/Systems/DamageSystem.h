@@ -61,7 +61,7 @@ public:
 
         hp->current -= proj->damage;
 
-        printf("DEADTAG\n");
+        // printf("DEADTAG\n");
         entityManager.AddComponent<DeadTag>(projectileId, DeadTag{});
 
         if (hp->current <= 0)

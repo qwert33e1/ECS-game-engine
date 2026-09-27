@@ -19,7 +19,7 @@ private:
     {
         uint32_t ret = idPool.front();
         idPool.pop();
-        printf("ENTITY ID : %d - ID POOL LENGTH : %lu\n", ret, idPool.size());
+        // printf("ENTITY ID : %d - ID POOL LENGTH : %lu\n", ret, idPool.size());
         return ret;
     }
 

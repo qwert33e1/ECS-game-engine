@@ -70,12 +70,15 @@ public:
                 if (inputManager.IsKeyJustPressed('Q'))
                 {
                     float dist = glm::length(glm::vec2(wPos.x - pos->x, wPos.y - pos->y));
-                    // for (int i = 0; i < 200; i++)
-                    // {
-                    //     float angle = ((float)i / 200) * 2.0f * 3.14159265f;
-                    //     entityManager.CreateEntity(Position{pos->x, pos->y}, Velocity{cos(angle) * 10.0f, sin(angle) * 10.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)});
-                    // }
-                    entityManager.CreateEntity(Projectile{100.0f}, Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 10.0f, (wPos.y - pos->y) / dist * 10.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, Collider{25.0f});
+                    for (int i = 0; i < 100; i++)
+                    {
+                        float angle = ((float)i / 100) * 2.0f * 3.14159265f;
+                        auto pvel = Velocity{cos(angle) * 100.0f, sin(angle) * 100.0f};
+                        auto ppos = Position{pos->x, pos->y};
+
+                        entityManager.CreateEntity(Projectile{100.0f}, Position{ppos}, Velocity{pvel}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, Collider{25.0f});
+                    }
+                    entityManager.CreateEntity(Projectile{100.0f}, Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 100.0f, (wPos.y - pos->y) / dist * 100.0f}, Sprite{glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, Collider{25.0f});
                 }
             }
         }

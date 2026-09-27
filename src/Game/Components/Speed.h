@@ -2,5 +2,5 @@
 
 struct Speed
 {
-    float value;
+    float current;
 };

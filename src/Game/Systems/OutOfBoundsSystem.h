@@ -55,7 +55,7 @@ public:
         for (uint32_t entity : outOfBoundsEntities)
         {
             entityManager.AddComponent<DeadTag>(entity, DeadTag{});
-            printf("DEADTAG\n");
+            // printf("DEADTAG\n");
         }
     }
 };

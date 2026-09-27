@@ -11,9 +11,9 @@ static int windowWidth = WINDOW_WIDTH, windowHeight = WINDOW_HEIGHT;
 static const char *windowCaption = "gaming";
 static GLFWwindow *window;
 
-PlayerInputManager inputManager;
+const float DT = 1.0f / 60.0f;
 
-MouseEventHandler *mouseHandler = nullptr;
+PlayerInputManager inputManager;
 
 static void error_callback(int error, const char *description)
 {
@@ -81,19 +81,35 @@ int main(void)
     /// -----------
     Renderer2D renderer;
     Game game = Game(renderer, inputManager);
-    mouseHandler = &game.GetMouseHandler();
 
     /// ------------------
+
+    float previousTime = 0.0f;
+    float elapsedTime = 0.0f;
+    float currentTime;
 
     while (!glfwWindowShouldClose(window))
     {
         inputManager.Update();
         glfwPollEvents();
+        currentTime = (float)glfwGetTime();
+        elapsedTime += currentTime - previousTime;
+        // printf("ELAPSED TIME: %f\n", elapsedTime);
 
         glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        game.Update();
+        game.UpdateVariable();
+
+        for (elapsedTime; elapsedTime >= DT; elapsedTime -= DT)
+        {
+            game.UpdateFixed(DT);
+        }
+        previousTime = currentTime;
+
+        game.LateUpdate();
+
+        game.Render();
 
         glfwSwapBuffers(window);
     }

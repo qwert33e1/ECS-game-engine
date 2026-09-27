@@ -26,7 +26,6 @@
 
 class Game
 {
-    MouseEventHandler mouseEventHandler;
     EntityManager entityManager;
     Renderer2D &renderer;
     MovementSystem movementSystem = MovementSystem(entityManager);
@@ -45,19 +44,20 @@ public:
     Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager)
     {
         this->entityManager.CreateEntity(Camera{300.0f, 300.0f, 1.0f, WINDOW_WIDTH, WINDOW_HEIGHT});
-        this->entityManager.CreateEntity(Position{400.0f, 400.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{0.0f});
-        this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{5.0f}, Collider{25.0f});
-        this->entityManager.CreateEntity(Position{200.0f, 200.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, Hostile{}, HealthPoint{10.0f, 10.0f}, Speed{5.0f}, Collider{25.0f});
+        this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{100.0f}, Collider{25.0f});
+        // this->entityManager.CreateEntity(Position{200.0f, 200.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, Hostile{}, HealthPoint{10.0f, 10.0f}, Speed{5.0f}, Collider{25.0f});
         this->entityManager.CreateEntity(MapBounds{10000.0f, 10000.0f});
     }
 
-    void Update()
+    void UpdateVariable()
     {
-        movementSystem.Update(0.1f);
-        renderSystem.Draw();
-        targetSystem.Update(entityManager);
-        cameraFollowSystem.Update(entityManager);
         playerInputSystem.Update(entityManager, inputManager);
+    }
+
+    void UpdateFixed(float dt)
+    {
+        movementSystem.Update(dt);
+        targetSystem.Update(entityManager, dt);
         playerBoundsSystem.Update(entityManager);
         outOfBoundsSystem.Update(entityManager);
         collisionDetectionSystem.Update(entityManager);
@@ -66,8 +66,13 @@ public:
         entityManager.ClearCollisionEvents();
     }
 
-    MouseEventHandler &GetMouseHandler()
+    void LateUpdate()
     {
-        return mouseEventHandler;
+        cameraFollowSystem.Update(entityManager);
+    }
+
+    void Render()
+    {
+        renderSystem.Draw();
     }
 };

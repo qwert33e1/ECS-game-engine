@@ -74,7 +74,7 @@ public:
 
                     if (distSq < (radiusSum * radiusSum))
                     {
-                        printf("e1: %d, e2: %d\n", cell[i].id, cell[j].id);
+                        // printf("e1: %d, e2: %d\n", cell[i].id, cell[j].id);
                         entityManager.PushCollisionEvent(CollisionEvent{cell[i].id, cell[j].id});
                     }
                 }

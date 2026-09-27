@@ -12,7 +12,7 @@
 class TargetSystem
 {
 public:
-    void Update(EntityManager &entityManager)
+    void Update(EntityManager &entityManager, float dt)
     {
         uint32_t posId = ComponentRegistry::GetId<Position>();
         uint32_t velId = ComponentRegistry::GetId<Velocity>();
@@ -49,19 +49,20 @@ public:
                 TargetPosition *target = reinterpret_cast<TargetPosition *>(chunk->data + targetOffset + i * targetSize);
 
                 float dist = glm::length(glm::vec2(target->x - pos->x, target->y - pos->y));
+                float stepDistance = dt * speed->current;
 
                 // Stops when the target is reached
-                if (dist < 0.1f)
+                if (dist < stepDistance)
                 {
                     vel->x = 0.0;
                     vel->y = 0.0;
+                    pos->x = target->x;
+                    pos->y = target->y;
                 }
                 else
                 {
-                    float dist = glm::length(glm::vec2(target->x - pos->x, target->y - pos->y));
-
-                    vel->x = (target->x - pos->x) / dist * speed->value;
-                    vel->y = (target->y - pos->y) / dist * speed->value;
+                    vel->x = (target->x - pos->x) / dist * speed->current;
+                    vel->y = (target->y - pos->y) / dist * speed->current;
                 }
             }
         }
