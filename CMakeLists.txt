@@ -24,6 +24,7 @@ target_include_directories(Program PRIVATE
     include/
     external/Glad/include
     external/glm/include
+    external/picoPNG 
 )
 
 target_link_libraries(Program PRIVATE

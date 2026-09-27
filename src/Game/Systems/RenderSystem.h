@@ -7,17 +7,17 @@
 #include "Game/Components/Camera.h"
 #include "Renderer/Renderer2D.h"
 #include "Utility/Coordinates.h"
+#include "Renderer/Texture.h"
 #include <glm/glm.hpp>
-
-/// TODO: camera entity, pos conversion
 
 class RenderSystem
 {
     EntityManager &entityManager;
     Renderer2D &renderer;
+    Texture tex;
 
 public:
-    RenderSystem(EntityManager &em, Renderer2D &renderer) : entityManager(em), renderer(renderer) {}
+    RenderSystem(EntityManager &em, Renderer2D &renderer) : entityManager(em), renderer(renderer), tex("Textures/feelsbadman2mask.png") {}
 
     void Draw()
     {
@@ -61,7 +61,7 @@ public:
                 glm::vec2 sPos = Coordinates::WorldToScreen(pos->x, pos->y, *camera);
                 // printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
 
-                renderer.AddQuad(sPos, 50.0f, sprite->color);
+                renderer.AddQuad(sPos, 50.0f, sprite->color, tex.GetId());
             }
         }
         renderer.updateGPU();

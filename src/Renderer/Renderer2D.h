@@ -104,8 +104,8 @@ public:
         {
             glUseProgram(shaderId);
 
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, whiteTexture);
+            // glActiveTexture(GL_TEXTURE0);
+            // glBindTexture(GL_TEXTURE_2D, whiteTexture);
 
             glm::mat4 MVP = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
 
@@ -118,7 +118,7 @@ public:
     }
 
     /// @param pos the middle of the quad
-    void AddQuad(glm::vec2 pos, float size, glm::vec4 color)
+    void AddQuad(glm::vec2 pos, float size, glm::vec4 color, unsigned int textureId, glm::vec2 uvMin = glm::vec2(0.0f, 0.0f), glm::vec2 uvMax = glm::vec2(1.0f, 1.0f))
     {
         float halfSize = size / 2;
         glm::vec2 toprightEdge = glm::vec2(pos.x + halfSize, pos.y + halfSize);
@@ -126,12 +126,15 @@ public:
         glm::vec2 bottomrightEdge = glm::vec2(pos.x + halfSize, pos.y - halfSize);
         glm::vec2 bottomleftEdge = glm::vec2(pos.x - halfSize, pos.y - halfSize);
 
-        vtx.push_back(VtxData(bottomleftEdge, glm::vec2(0.0f, 0.0f), color));
-        vtx.push_back(VtxData(bottomrightEdge, glm::vec2(1.0f, 0.0f), color));
-        vtx.push_back(VtxData(topleftEdge, glm::vec2(0.0f, 1.0f), color));
-        vtx.push_back(VtxData(topleftEdge, glm::vec2(0.0f, 1.0f), color));
-        vtx.push_back(VtxData(bottomrightEdge, glm::vec2(1.0f, 0.0f), color));
-        vtx.push_back(VtxData(toprightEdge, glm::vec2(1.0f, 1.0f), color));
+        vtx.push_back(VtxData(bottomleftEdge, glm::vec2(uvMin.x, uvMin.y), color));
+        vtx.push_back(VtxData(bottomrightEdge, glm::vec2(uvMax.x, uvMin.y), color));
+        vtx.push_back(VtxData(topleftEdge, glm::vec2(uvMin.x, uvMax.y), color));
+        vtx.push_back(VtxData(topleftEdge, glm::vec2(uvMin.x, uvMax.y), color));
+        vtx.push_back(VtxData(bottomrightEdge, glm::vec2(uvMax.x, uvMin.y), color));
+        vtx.push_back(VtxData(toprightEdge, glm::vec2(uvMax.x, uvMax.y), color));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureId);
     }
 
     unsigned int createShader()

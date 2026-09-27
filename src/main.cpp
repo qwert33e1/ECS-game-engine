@@ -6,6 +6,9 @@
 #include "Game/Game.h"
 #include "Input/PlayerInputManager.h"
 
+#include <filesystem>
+#include <iostream>
+
 static int minorNumber = 3, majorNumber = 3;
 static int windowWidth = WINDOW_WIDTH, windowHeight = WINDOW_HEIGHT;
 static const char *windowCaption = "gaming";
@@ -77,6 +80,9 @@ int main(void)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Put this in your main() function temporarily:
+    std::cout << "The program is looking in: " << std::filesystem::current_path() << std::endl;
 
     /// -----------
     Renderer2D renderer;
