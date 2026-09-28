@@ -14,10 +14,11 @@ class RenderSystem
 {
     EntityManager &entityManager;
     Renderer2D &renderer;
-    Texture tex;
+    Texture background;
+    Texture spriteSheet;
 
 public:
-    RenderSystem(EntityManager &em, Renderer2D &renderer) : entityManager(em), renderer(renderer), tex("Textures/feelsbadman2mask.png") {}
+    RenderSystem(EntityManager &em, Renderer2D &renderer) : entityManager(em), renderer(renderer), background("Textures/feelsbadman2mask.png"), spriteSheet("Textures/feelsbadman2mask.png") {}
 
     void Draw()
     {
@@ -69,8 +70,10 @@ public:
         glm::vec2 uvMin(uvOffsetX, uvOffsetY);
         glm::vec2 uvMax(uvOffsetX + spanX, uvOffsetY + spanY);
 
-        renderer.AddQuad(glm::vec2((float)WINDOW_WIDTH / 2.0f, (float)WINDOW_HEIGHT / 2.0f), (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), tex.GetId(), uvMin, uvMax);
+        renderer.AddQuad(glm::vec2((float)WINDOW_WIDTH / 2.0f, (float)WINDOW_HEIGHT / 2.0f), (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), background.GetId(), uvMin, uvMax);
+
         /// --- --- ---
+
         for (auto chunk : entityChunks)
         {
             uint32_t posOffset = chunk->archetype->GetComponentOffset(posId);
@@ -85,7 +88,7 @@ public:
                 glm::vec2 sPos = Coordinates::WorldToScreen(pos->x, pos->y, *camera);
                 // printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
 
-                renderer.AddQuad(sPos, 50.0f, 50.0f, sprite->color, tex.GetId());
+                renderer.AddQuad(sPos, 64.0f, 64.0f, sprite->color, spriteSheet.GetId());
             }
         }
         renderer.updateGPU();

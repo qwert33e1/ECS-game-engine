@@ -6,9 +6,6 @@
 #include "Game/Game.h"
 #include "Input/PlayerInputManager.h"
 
-#include <filesystem>
-#include <iostream>
-
 static int minorNumber = 3, majorNumber = 3;
 static int windowWidth = WINDOW_WIDTH, windowHeight = WINDOW_HEIGHT;
 static const char *windowCaption = "gaming";
@@ -81,10 +78,8 @@ int main(void)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Put this in your main() function temporarily:
-    std::cout << "The program is looking in: " << std::filesystem::current_path() << std::endl;
-
     /// -----------
+
     Renderer2D renderer;
     Game game = Game(renderer, inputManager);
 
@@ -93,6 +88,8 @@ int main(void)
     float previousTime = 0.0f;
     float elapsedTime = 0.0f;
     float currentTime;
+    float accumulatedTime = 0.0f;
+    int frameCount = 0;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -100,8 +97,15 @@ int main(void)
         glfwPollEvents();
         currentTime = (float)glfwGetTime();
         elapsedTime += currentTime - previousTime;
-        // printf("ELAPSED TIME: %f\n", elapsedTime);
 
+        frameCount++;
+        accumulatedTime += currentTime - previousTime;
+        if (accumulatedTime >= 1.0f)
+        {
+            printf("FPS: %d\n", frameCount);
+            frameCount = 0;
+            accumulatedTime -= 1.0f;
+        }
         glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 

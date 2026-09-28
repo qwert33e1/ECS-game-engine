@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <glm/glm.hpp>
 
 struct FatCell
 {
@@ -13,52 +14,74 @@ struct FatCell
 
 class SpatialGrid
 {
-    float width;
-    float height;
-    int columns;
-    int rows;
+    float mWidth;
+    float mHeight;
+    int gridWidth;
+    int gridHeight;
     float cellSize;
 
     std::vector<std::vector<FatCell>> cells;
+    std::vector<glm::ivec2> activeCells;
 
 public:
-    SpatialGrid(float cellSize, float width, float height) : cellSize(cellSize), width(width), height(height)
+    SpatialGrid(float cellSize, float width, float height) : cellSize(cellSize), mWidth(width), mHeight(height)
     {
-        this->columns = static_cast<int>(width / cellSize) + 1;
-        this->rows = static_cast<int>(height / cellSize) + 1;
+        this->gridWidth = static_cast<int>(mWidth / cellSize) + 1;
+        this->gridHeight = static_cast<int>(mHeight / cellSize) + 1;
 
-        cells.resize(this->columns * this->rows);
+        cells.resize(this->gridWidth * this->gridHeight);
     }
 
     void Add(float x, float y, float radius, uint32_t id)
     {
-        x += width / 2.0f;
-        y += height / 2.0f;
+        x += mWidth / 2.0f;
+        y += mHeight / 2.0f;
 
-        float minX = x - radius;
-        float maxX = x + radius;
-        float minY = y - radius;
-        float maxY = y + radius;
+        int gridX = static_cast<int>(x / cellSize);
+        int gridY = static_cast<int>(y / cellSize);
 
-        int gridMinX = static_cast<int>(minX / cellSize);
-        int gridMaxX = static_cast<int>(maxX / cellSize);
-        int gridMinY = static_cast<int>(minY / cellSize);
-        int gridMaxY = static_cast<int>(maxY / cellSize);
-
-        for (int i = gridMinY; i <= gridMaxY; i++)
+        if (gridX < 0 || gridX >= gridWidth || gridY < 0 || gridY >= gridHeight)
         {
-            for (int j = gridMinX; j <= gridMaxX; j++)
-            {
-                if (j >= 0 && j < columns && i >= 0 && i < rows)
-                {
-                    cells[i * columns + j].push_back(FatCell{id, x, y, radius});
-                }
-            }
+            return;
         }
+
+        size_t index = gridY * gridWidth + gridX;
+
+        if (cells[index].empty())
+        {
+            activeCells.push_back(glm::ivec2{gridX, gridY});
+        }
+
+        cells[index].push_back(FatCell{id, x, y, radius});
     }
 
-    std::vector<std::vector<FatCell>> GetCells()
+    void Clear()
+    {
+        for (auto const &cell : activeCells)
+        {
+            int flatIndex = cell.y * gridWidth + cell.x;
+            cells[flatIndex].clear();
+        }
+        activeCells.clear();
+    }
+
+    std::vector<std::vector<FatCell>> &GetCells()
     {
         return cells;
+    }
+
+    std::vector<glm::ivec2> &GetActiveCells()
+    {
+        return activeCells;
+    }
+
+    int getGridWidth()
+    {
+        return gridWidth;
+    }
+
+    int getGridHeight()
+    {
+        return gridHeight;
     }
 };

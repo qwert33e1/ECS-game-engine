@@ -11,9 +11,37 @@
 
 class CollisionDetectionSystem
 {
-public:
-    void Update(EntityManager &entityManager)
+    void CheckCellAgainstCell(EntityManager &entityManager, std::vector<FatCell> const &cell1, std::vector<FatCell> const &cell2, bool sameCell)
     {
+        for (auto const &entity1 : cell1)
+        {
+            for (auto const &entity2 : cell2)
+            {
+                if (sameCell)
+                {
+                    if (entity1.id < entity2.id)
+                    {
+                        float dx = entity1.x - entity2.x;
+                        float dy = entity1.y - entity2.y;
+                        float distSq = (dx * dx) + (dy * dy);
+
+                        float radiusSum = entity1.radius + entity2.radius;
+
+                        if (distSq < (radiusSum * radiusSum))
+                        {
+                            entityManager.PushCollisionEvent(CollisionEvent{entity1.id, entity2.id});
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+public:
+    void Update(EntityManager &entityManager, SpatialGrid &grid)
+    {
+        grid.Clear();
+
         // getting the MapBounds entity
         uint32_t boundsId = ComponentRegistry::GetId<MapBounds>();
         uint32_t boundsSize = ComponentRegistry::globalSizeTable[boundsId];
@@ -26,8 +54,6 @@ public:
         }
         uint32_t boundsOffset = boundsChunk->archetype->GetComponentOffset(boundsId);
         MapBounds *bounds = reinterpret_cast<MapBounds *>(boundsChunk->data + boundsOffset);
-
-        SpatialGrid grid(100.0f, bounds->width, bounds->height);
 
         uint32_t posId = ComponentRegistry::GetId<Position>();
         uint32_t posSize = ComponentRegistry::globalSizeTable[posId];
@@ -58,27 +84,28 @@ public:
             }
         }
 
-        auto cells = grid.GetCells();
+        auto &cells = grid.GetCells();
+        auto &activeCells = grid.GetActiveCells();
 
-        for (auto const &cell : cells)
+        for (auto const &cell : activeCells)
         {
-            for (size_t i = 0; i < cell.size(); i++)
-            {
-                for (size_t j = i + 1; j < cell.size(); j++)
-                {
-                    float dx = cell[i].x - cell[j].x;
-                    float dy = cell[i].y - cell[j].y;
-                    float distSq = (dx * dx) + (dy * dy);
+            int gridWidth = grid.getGridWidth();
+            int gridHeight = grid.getGridHeight();
 
-                    float radiusSum = cell[i].radius + cell[j].radius;
+            int gridX = cell.x;
+            int gridY = cell.y;
+            auto &currentCell = cells[gridY * gridWidth + gridX];
 
-                    if (distSq < (radiusSum * radiusSum))
-                    {
-                        // printf("e1: %d, e2: %d\n", cell[i].id, cell[j].id);
-                        entityManager.PushCollisionEvent(CollisionEvent{cell[i].id, cell[j].id});
-                    }
-                }
-            }
+            CheckCellAgainstCell(entityManager, currentCell, currentCell, true);
+
+            if (gridX + 1 < gridWidth)
+                CheckCellAgainstCell(entityManager, currentCell, cells[gridY * gridWidth + (gridX + 1)], false);
+            if (gridX + 1 < gridWidth && gridY + 1 < gridHeight)
+                CheckCellAgainstCell(entityManager, currentCell, cells[(gridY + 1) * gridWidth + gridX], false);
+            if (gridY + 1 < gridHeight)
+                CheckCellAgainstCell(entityManager, currentCell, cells[(gridY + 1) * gridWidth + gridX], false);
+            if (gridX - 1 >= 0 && gridY + 1 < gridHeight)
+                CheckCellAgainstCell(entityManager, currentCell, cells[(gridY + 1) * gridWidth + (gridX - 1)], false);
         }
     }
 };

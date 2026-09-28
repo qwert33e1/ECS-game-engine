@@ -40,13 +40,19 @@ class Game
     CollisionDetectionSystem collisionDetectionSystem;
     DamageSystem damageSystem;
 
+    // should not be here
+    float mapWidth = 10000.0f;
+    float mapHeight = 10000.0f;
+    float cellSize = 256.0f;
+    SpatialGrid grid;
+
 public:
-    Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager)
+    Game(Renderer2D &renderer, PlayerInputManager &inputManager) : renderer(renderer), inputManager(inputManager), grid(cellSize, mapWidth, mapHeight)
     {
         this->entityManager.CreateEntity(Camera{300.0f, 300.0f, 1.0f, WINDOW_WIDTH, WINDOW_HEIGHT});
-        this->entityManager.CreateEntity(Position{300.0f, 300.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{300.0f, 300.0f}, Speed{100.0f}, Collider{25.0f});
+        this->entityManager.CreateEntity(Position{0.0f, 0.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{0.0f, 0.0f}, Speed{100.0f}, Collider{25.0f});
         // this->entityManager.CreateEntity(Position{200.0f, 200.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, Hostile{}, HealthPoint{10.0f, 10.0f}, Speed{5.0f}, Collider{25.0f});
-        this->entityManager.CreateEntity(MapBounds{10000.0f, 10000.0f});
+        this->entityManager.CreateEntity(MapBounds{mapWidth, mapHeight});
     }
 
     void UpdateVariable()
@@ -60,7 +66,7 @@ public:
         targetSystem.Update(entityManager, dt);
         playerBoundsSystem.Update(entityManager);
         outOfBoundsSystem.Update(entityManager);
-        collisionDetectionSystem.Update(entityManager);
+        collisionDetectionSystem.Update(entityManager, grid);
         damageSystem.Update(entityManager);
         cleanUpSystem.Update(entityManager);
         entityManager.ClearCollisionEvents();
