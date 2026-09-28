@@ -23,6 +23,7 @@
 #include "Game/Systems/PlayerBoundsSystem.h"
 #include "Game/Systems/CollisionDetectionSystem.h"
 #include "Game/Systems/DamageSystem.h"
+#include "Game/Systems/HostileFollowSystem.h"
 
 class Game
 {
@@ -39,6 +40,7 @@ class Game
     PlayerBoundsSystem playerBoundsSystem;
     CollisionDetectionSystem collisionDetectionSystem;
     DamageSystem damageSystem;
+    HostileFollowSystem hostileFollowSystem;
 
     // should not be here
     float mapWidth = 10000.0f;
@@ -51,7 +53,7 @@ public:
     {
         this->entityManager.CreateEntity(Camera{300.0f, 300.0f, 1.0f, WINDOW_WIDTH, WINDOW_HEIGHT});
         this->entityManager.CreateEntity(Position{0.0f, 0.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, PlayerControlled{}, TargetPosition{0.0f, 0.0f}, Speed{100.0f}, Collider{25.0f});
-        // this->entityManager.CreateEntity(Position{200.0f, 200.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, Hostile{}, HealthPoint{10.0f, 10.0f}, Speed{5.0f}, Collider{25.0f});
+        this->entityManager.CreateEntity(Position{200.0f, 200.0f}, Velocity{0.0f, 0.0f}, Sprite{glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)}, TargetPosition{0.0f, 0.0f}, Hostile{}, HealthPoint{10.0f, 10.0f}, Speed{60.0f}, Collider{25.0f});
         this->entityManager.CreateEntity(MapBounds{mapWidth, mapHeight});
     }
 
@@ -63,6 +65,7 @@ public:
     void UpdateFixed(float dt)
     {
         movementSystem.Update(dt);
+        hostileFollowSystem.Update(entityManager);
         targetSystem.Update(entityManager, dt);
         playerBoundsSystem.Update(entityManager);
         outOfBoundsSystem.Update(entityManager);

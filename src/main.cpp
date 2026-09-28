@@ -102,10 +102,11 @@ int main(void)
         accumulatedTime += currentTime - previousTime;
         if (accumulatedTime >= 1.0f)
         {
-            printf("FPS: %d\n", frameCount);
+            printf("FPS: %d elapsed time: %f\n", frameCount, currentTime - previousTime);
             frameCount = 0;
             accumulatedTime -= 1.0f;
         }
+
         glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
