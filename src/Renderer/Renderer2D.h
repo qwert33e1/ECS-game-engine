@@ -118,13 +118,14 @@ public:
     }
 
     /// @param pos the middle of the quad
-    void AddQuad(glm::vec2 pos, float size, glm::vec4 color, unsigned int textureId, glm::vec2 uvMin = glm::vec2(0.0f, 0.0f), glm::vec2 uvMax = glm::vec2(1.0f, 1.0f))
+    void AddQuad(glm::vec2 pos, float w, float h, glm::vec4 color, unsigned int textureId, glm::vec2 uvMin = glm::vec2(0.0f, 0.0f), glm::vec2 uvMax = glm::vec2(1.0f, 1.0f))
     {
-        float halfSize = size / 2;
-        glm::vec2 toprightEdge = glm::vec2(pos.x + halfSize, pos.y + halfSize);
-        glm::vec2 topleftEdge = glm::vec2(pos.x - halfSize, pos.y + halfSize);
-        glm::vec2 bottomrightEdge = glm::vec2(pos.x + halfSize, pos.y - halfSize);
-        glm::vec2 bottomleftEdge = glm::vec2(pos.x - halfSize, pos.y - halfSize);
+        float halfW = w / 2.0f;
+        float halfH = h / 2.0f;
+        glm::vec2 toprightEdge = glm::vec2(pos.x + halfW, pos.y + halfH);
+        glm::vec2 topleftEdge = glm::vec2(pos.x - halfW, pos.y + halfH);
+        glm::vec2 bottomrightEdge = glm::vec2(pos.x + halfW, pos.y - halfH);
+        glm::vec2 bottomleftEdge = glm::vec2(pos.x - halfW, pos.y - halfH);
 
         vtx.push_back(VtxData(bottomleftEdge, glm::vec2(uvMin.x, uvMin.y), color));
         vtx.push_back(VtxData(bottomrightEdge, glm::vec2(uvMax.x, uvMin.y), color));

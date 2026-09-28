@@ -47,6 +47,30 @@ public:
 
         std::vector<Chunk *> entityChunks = entityManager.GetEntities(bitmask);
 
+        /// --- infinite scrolling background ---
+
+        float tileSize = 128.0f;
+
+        float uvOffsetX = fmodf(camera->x / tileSize, 1.0f);
+        float uvOffsetY = fmodf(camera->y / tileSize, 1.0f);
+
+        if (uvOffsetX < 0.0f)
+        {
+            uvOffsetX += 1.0f;
+        }
+        if (uvOffsetY < 0.0f)
+        {
+            uvOffsetY += 1.0f;
+        }
+
+        float spanX = WINDOW_WIDTH / tileSize;
+        float spanY = WINDOW_HEIGHT / tileSize;
+
+        glm::vec2 uvMin(uvOffsetX, uvOffsetY);
+        glm::vec2 uvMax(uvOffsetX + spanX, uvOffsetY + spanY);
+
+        renderer.AddQuad(glm::vec2((float)WINDOW_WIDTH / 2.0f, (float)WINDOW_HEIGHT / 2.0f), (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), tex.GetId(), uvMin, uvMax);
+        /// --- --- ---
         for (auto chunk : entityChunks)
         {
             uint32_t posOffset = chunk->archetype->GetComponentOffset(posId);
@@ -61,7 +85,7 @@ public:
                 glm::vec2 sPos = Coordinates::WorldToScreen(pos->x, pos->y, *camera);
                 // printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
 
-                renderer.AddQuad(sPos, 50.0f, sprite->color, tex.GetId());
+                renderer.AddQuad(sPos, 50.0f, 50.0f, sprite->color, tex.GetId());
             }
         }
         renderer.updateGPU();
