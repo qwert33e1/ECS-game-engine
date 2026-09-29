@@ -6,9 +6,12 @@ set(CMAKE_CXX_STANDARD 20)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+
 add_executable(Program
-    src/main.cpp
+    ${SOURCES}
     external/Glad/src/glad.c
+    external/picoPNG/picoPNG.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR NOT CMAKE_BUILD_TYPE)

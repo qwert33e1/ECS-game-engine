@@ -3,8 +3,8 @@
 
 namespace ComponentRegistry
 {
-    uint32_t count;
-    uint32_t globalSizeTable[MAX_COMPONENTS];
+    inline uint32_t count;
+    inline uint32_t globalSizeTable[MAX_COMPONENTS];
 
     template <typename T>
     uint32_t RegisterAndGetId()

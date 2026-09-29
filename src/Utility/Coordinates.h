@@ -4,7 +4,7 @@
 
 namespace Coordinates
 {
-    glm::vec2 WorldToScreen(float wX, float wY, Camera camera)
+    inline glm::vec2 WorldToScreen(float wX, float wY, Camera camera)
     {
         float sX = (wX - camera.x) + (camera.screenWidth / 2.0f);
         float sY = (wY - camera.y) + (camera.screenHeight / 2.0f);
@@ -12,7 +12,7 @@ namespace Coordinates
         return glm::vec2(sX, sY);
     }
 
-    glm::vec2 ScreenToWorld(float sX, float sY, Camera camera)
+    inline glm::vec2 ScreenToWorld(float sX, float sY, Camera camera)
     {
         float wX = camera.x + (sX - camera.screenWidth / 2.0f);
         float wY = camera.y + (sY - camera.screenHeight / 2.0f);

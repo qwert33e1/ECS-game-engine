@@ -29,8 +29,8 @@ class Game
 {
     EntityManager entityManager;
     Renderer2D &renderer;
-    MovementSystem movementSystem = MovementSystem(entityManager);
-    RenderSystem renderSystem = RenderSystem(entityManager, renderer);
+    MovementSystem movementSystem;
+    RenderSystem renderSystem = RenderSystem(renderer);
     PlayerInputSystem playerInputSystem;
     PlayerInputManager &inputManager;
     TargetSystem targetSystem;
@@ -64,7 +64,7 @@ public:
 
     void UpdateFixed(float dt)
     {
-        movementSystem.Update(dt);
+        movementSystem.Update(entityManager, dt);
         hostileFollowSystem.Update(entityManager);
         targetSystem.Update(entityManager, dt);
         playerBoundsSystem.Update(entityManager);
@@ -82,6 +82,6 @@ public:
 
     void Render()
     {
-        renderSystem.Draw();
+        renderSystem.Update(entityManager);
     }
 };
