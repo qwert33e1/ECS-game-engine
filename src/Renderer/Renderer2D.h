@@ -56,6 +56,7 @@ class Renderer2D
     std::vector<VtxData> vtx;
 
     unsigned int whiteTexture;
+    unsigned int currentTexture;
 
 public:
     Renderer2D()
@@ -98,14 +99,16 @@ public:
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
     }
 
-    void Draw()
+    void Flush()
     {
         if (vtx.size() > 0)
         {
+            updateGPU();
+
             glUseProgram(shaderId);
 
-            // glActiveTexture(GL_TEXTURE0);
-            // glBindTexture(GL_TEXTURE_2D, whiteTexture);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, currentTexture);
 
             glm::mat4 MVP = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
 
@@ -114,12 +117,21 @@ public:
 
             glBindVertexArray(vao);
             glDrawArrays(GL_TRIANGLES, 0, (int)vtx.size());
+
+            Clear();
         }
     }
 
     /// @param pos the middle of the quad
     void AddQuad(glm::vec2 pos, float w, float h, glm::vec4 color, unsigned int textureId, glm::vec2 uvMin = glm::vec2(0.0f, 0.0f), glm::vec2 uvMax = glm::vec2(1.0f, 1.0f))
     {
+        if (textureId != currentTexture && !vtx.empty())
+        {
+            Flush();
+        }
+
+        currentTexture = textureId;
+
         float halfW = w / 2.0f;
         float halfH = h / 2.0f;
         glm::vec2 toprightEdge = glm::vec2(pos.x + halfW, pos.y + halfH);
@@ -133,9 +145,6 @@ public:
         vtx.push_back(VtxData(topleftEdge, glm::vec2(uvMin.x, uvMax.y), color));
         vtx.push_back(VtxData(bottomrightEdge, glm::vec2(uvMax.x, uvMin.y), color));
         vtx.push_back(VtxData(toprightEdge, glm::vec2(uvMax.x, uvMax.y), color));
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureId);
     }
 
     unsigned int createShader()
@@ -181,7 +190,7 @@ public:
         return programId;
     }
 
-    void clear()
+    void Clear()
     {
         vtx.clear();
     }

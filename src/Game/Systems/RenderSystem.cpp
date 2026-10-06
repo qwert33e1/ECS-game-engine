@@ -30,7 +30,7 @@ void RenderSystem::Update(EntityManager &entityManager)
 
     /// --- infinite scrolling background ---
 
-    float tileSize = 128.0f;
+    float tileSize = 64.0f;
 
     float uvOffsetX = fmodf(camera->x / tileSize, 1.0f);
     float uvOffsetY = fmodf(camera->y / tileSize, 1.0f);
@@ -66,12 +66,18 @@ void RenderSystem::Update(EntityManager &entityManager)
             Sprite *sprite = reinterpret_cast<Sprite *>(chunk->data + spriteOffset + i * spriteSize);
 
             glm::vec2 sPos = Coordinates::WorldToScreen(pos->x, pos->y, *camera);
-            // printf("RENDERED COORDS: (%f, %f)\n", sPos.x, sPos.y);
 
-            renderer.AddQuad(sPos, 64.0f, 64.0f, sprite->color, spriteSheet.GetId());
+            SubTexture subTexture = spriteManager.GetSprite(sprite->spriteId);
+
+            renderer.AddQuad(sPos, 64.0f, 64.0f, sprite->color, subTexture.GetId(), subTexture.GetUVMin(), subTexture.GetUVMax());
         }
     }
     renderer.updateGPU();
-    renderer.Draw();
-    renderer.clear();
+    renderer.Flush();
+    renderer.Clear();
+}
+
+void RenderSystem::LoadTexture()
+{
+    spriteManager.LoadSheet("Textures/spritesheet.png", "Textures/spritesheet.json");
 }

@@ -1,3 +1,5 @@
+#include <thread>
+#include <chrono>
 #include <glad/glad.h>
 #include <Renderer/Renderer2D.h>
 #include <GLFW/glfw3.h>
@@ -11,7 +13,7 @@ static int windowWidth = WINDOW_WIDTH, windowHeight = WINDOW_HEIGHT;
 static const char *windowCaption = "gaming";
 static GLFWwindow *window;
 
-const float DT = 1.0f / 60.0f;
+const float updateInterval = 1.0f / 165.0f;
 
 PlayerInputManager inputManager;
 
@@ -60,6 +62,10 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minorNumber);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    // GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
+
+    // const GLFWvidmode *mode = glfwGetVideoMode(primaryMonitor);
+
     window = glfwCreateWindow(windowWidth, windowHeight, windowCaption, NULL, NULL);
     if (!window)
     {
@@ -85,7 +91,7 @@ int main(void)
 
     /// ------------------
 
-    float previousTime = 0.0f;
+    float previousTime = (float)glfwGetTime();
     float elapsedTime = 0.0f;
     float currentTime;
     float accumulatedTime = 0.0f;
@@ -112,9 +118,9 @@ int main(void)
 
         game.UpdateVariable();
 
-        for (elapsedTime; elapsedTime >= DT; elapsedTime -= DT)
+        for (elapsedTime; elapsedTime >= updateInterval; elapsedTime -= updateInterval)
         {
-            game.UpdateFixed(DT);
+            game.UpdateFixed(updateInterval);
         }
         previousTime = currentTime;
 
@@ -123,6 +129,19 @@ int main(void)
         game.Render();
 
         glfwSwapBuffers(window);
+
+        double timeAfterRender = glfwGetTime();
+        double timeSpentThisFrame = timeAfterRender - currentTime;
+        if (timeSpentThisFrame < updateInterval)
+        {
+            double sleepTime = updateInterval - timeSpentThisFrame - 0.0005;
+
+            std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+
+            while (glfwGetTime() - currentTime < updateInterval)
+            {
+            }
+        }
     }
 
     glfwDestroyWindow(window);

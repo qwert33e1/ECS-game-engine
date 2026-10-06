@@ -5,6 +5,7 @@
 #include "Game/Components/Position.h"
 #include "Game/Components/Sprite.h"
 #include "Game/Components/Camera.h"
+#include "DataStructures/SpriteManager.h"
 #include "Renderer/Renderer2D.h"
 #include "Utility/Coordinates.h"
 #include "Renderer/Texture.h"
@@ -13,11 +14,13 @@
 class RenderSystem
 {
     Renderer2D &renderer;
+    SpriteManager spriteManager;
     Texture background;
-    Texture spriteSheet;
 
 public:
-    RenderSystem(Renderer2D &renderer) : renderer(renderer), background("Textures/feelsbadman2mask.png"), spriteSheet("Textures/feelsbadman2mask.png") {}
+    RenderSystem(Renderer2D &renderer) : renderer(renderer), background("Textures/grass.png") {}
+
+    void LoadTexture();
 
     void Update(EntityManager &entityManager);
 };

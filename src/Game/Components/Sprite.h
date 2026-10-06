@@ -3,5 +3,6 @@
 
 struct Sprite
 {
+    const char *spriteId;
     glm::vec4 color;
 };
