@@ -3,7 +3,7 @@
 #include "common.h"
 #include "Archetype.h"
 #include "ComponentRegistry.h"
-#include "DataStructures/CollisionEvent.h"
+#include "Helpers/CollisionEvent.h"
 
 class EntityManager
 {

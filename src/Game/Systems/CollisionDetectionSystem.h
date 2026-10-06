@@ -5,8 +5,8 @@
 #include "Game/Components/Position.h"
 #include "Game/Components/Collider.h"
 #include "Game/Components/MapBounds.h"
-#include "DataStructures/SpatialGrid.h"
-#include "DataStructures/CollisionEvent.h"
+#include "Helpers/SpatialGrid.h"
+#include "Helpers/CollisionEvent.h"
 #include <glm/glm.hpp>
 
 class CollisionDetectionSystem

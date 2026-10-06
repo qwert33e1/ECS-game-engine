@@ -10,6 +10,7 @@
 #include "Game/Components/Projectile.h"
 #include "Game/Components/Collider.h"
 #include "Game/Components/Sprite.h"
+#include "Game/Components/Rotation.h"
 #include "Input/PlayerInputManager.h"
 #include "Utility/Coordinates.h"
 #include <glm/glm.hpp>

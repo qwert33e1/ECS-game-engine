@@ -12,8 +12,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true   # ha az external/ mappa submodule, ha nincs, ez ártalmatlan
 
       - name: Install dependencies
         run: |

@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include "common.h"
+#include "Utility/Transformation.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -123,7 +124,7 @@ public:
     }
 
     /// @param pos the middle of the quad
-    void AddQuad(glm::vec2 pos, float w, float h, glm::vec4 color, unsigned int textureId, glm::vec2 uvMin = glm::vec2(0.0f, 0.0f), glm::vec2 uvMax = glm::vec2(1.0f, 1.0f))
+    void AddQuad(glm::vec2 pos, float w, float h, float rotation, glm::vec4 color, unsigned int textureId, glm::vec2 uvMin = glm::vec2(0.0f, 0.0f), glm::vec2 uvMax = glm::vec2(1.0f, 1.0f))
     {
         if (textureId != currentTexture && !vtx.empty())
         {
@@ -134,17 +135,23 @@ public:
 
         float halfW = w / 2.0f;
         float halfH = h / 2.0f;
-        glm::vec2 toprightEdge = glm::vec2(pos.x + halfW, pos.y + halfH);
-        glm::vec2 topleftEdge = glm::vec2(pos.x - halfW, pos.y + halfH);
-        glm::vec2 bottomrightEdge = glm::vec2(pos.x + halfW, pos.y - halfH);
-        glm::vec2 bottomleftEdge = glm::vec2(pos.x - halfW, pos.y - halfH);
 
-        vtx.push_back(VtxData(bottomleftEdge, glm::vec2(uvMin.x, uvMin.y), color));
-        vtx.push_back(VtxData(bottomrightEdge, glm::vec2(uvMax.x, uvMin.y), color));
-        vtx.push_back(VtxData(topleftEdge, glm::vec2(uvMin.x, uvMax.y), color));
-        vtx.push_back(VtxData(topleftEdge, glm::vec2(uvMin.x, uvMax.y), color));
-        vtx.push_back(VtxData(bottomrightEdge, glm::vec2(uvMax.x, uvMin.y), color));
-        vtx.push_back(VtxData(toprightEdge, glm::vec2(uvMax.x, uvMax.y), color));
+        glm::vec2 tr = glm::vec2(halfW, halfH);
+        glm::vec2 tl = glm::vec2(-halfW, halfH);
+        glm::vec2 br = glm::vec2(halfW, -halfH);
+        glm::vec2 bl = glm::vec2(-halfW, -halfH);
+
+        tr = Transformation::rotatePoint(tr, pos, rotation);
+        tl = Transformation::rotatePoint(tl, pos, rotation);
+        br = Transformation::rotatePoint(br, pos, rotation);
+        bl = Transformation::rotatePoint(bl, pos, rotation);
+
+        vtx.push_back(VtxData(bl, glm::vec2(uvMin.x, uvMin.y), color));
+        vtx.push_back(VtxData(br, glm::vec2(uvMax.x, uvMin.y), color));
+        vtx.push_back(VtxData(tl, glm::vec2(uvMin.x, uvMax.y), color));
+        vtx.push_back(VtxData(tl, glm::vec2(uvMin.x, uvMax.y), color));
+        vtx.push_back(VtxData(br, glm::vec2(uvMax.x, uvMin.y), color));
+        vtx.push_back(VtxData(tr, glm::vec2(uvMax.x, uvMax.y), color));
     }
 
     unsigned int createShader()
