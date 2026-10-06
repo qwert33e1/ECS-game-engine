@@ -62,7 +62,7 @@ void PlayerInputSystem::Update(EntityManager &entityManager, PlayerInputManager 
 
                 //     entityManager.CreateEntity(Projectile{100.0f}, Position{ppos}, Velocity{pvel}, Sprite{"fireball.png", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, Collider{25.0f}, Rotation{0.0f});
                 // }
-                entityManager.CreateEntity(Projectile{1.0f}, Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 100.0f, (wPos.y - pos->y) / dist * 100.0f}, Sprite{"fireball.png", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, Collider{25.0f}, Rotation{0.0f});
+                entityManager.CreateEntity(Projectile{1.0f}, Position{pos->x, pos->y}, Velocity{(wPos.x - pos->x) / dist * 100.0f, (wPos.y - pos->y) / dist * 100.0f}, Sprite{"fireball.png", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)}, Collider{15.0f}, Rotation{0.0f});
             }
         }
     }

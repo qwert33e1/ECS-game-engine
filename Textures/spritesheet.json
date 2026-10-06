@@ -8,29 +8,29 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
 	"sourceSize": {"w":64,"h":64}
 },
-"hehe.png":
+"skeleton.png":
 {
-	"frame": {"x":128,"y":0,"w":128,"h":128},
+	"frame": {"x":64,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
-	"sourceSize": {"w":128,"h":128}
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
 },
-"monster.png":
+"wizard.png":
 {
-	"frame": {"x":256,"y":0,"w":128,"h":128},
+	"frame": {"x":128,"y":0,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":128},
-	"sourceSize": {"w":128,"h":128}
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+	"sourceSize": {"w":64,"h":64}
 }},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",
 	"image": "spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":384,"h":128},
+	"size": {"w":192,"h":64},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:be27ea99776b73a55f6e5fb3fa6d589c:68baa31bd4b3df8ef30373cdbca144fe:729adc6043343cfda41c447ce8f464d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:e09737bbff0b4aa4c8d6dac3c029e91e:3066531cf5dc595463d1fcd4ad2d0933:729adc6043343cfda41c447ce8f464d6$"
 }
 }
